@@ -9,7 +9,7 @@ import (
 
 type DiskRepository interface {
 	CreateFile(path_name string, file_name string) error
-	// List(dir string) ([]string, error)
+	List(dir string) ([]string, error)
 	// Read(path string) (string, error)
 }
 
@@ -30,4 +30,16 @@ func (repo *DiskRepositoryImpl) CreateFile(path_name string, file_name string) e
 	}
 	file.Chmod(0644)
 	return nil
+}
+
+func (repo *DiskRepositoryImpl) List(dir string) ([]string, error) {
+	entries, err := os.ReadDir(dir)
+	if err != nil {
+		return []string{}, nil
+	}
+	names := []string{}
+	for _, entry := range entries {
+		names = append(names, entry.Name())
+	}
+	return names, nil
 }

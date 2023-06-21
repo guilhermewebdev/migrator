@@ -56,3 +56,23 @@ func TestCreateTheSameFileMultiplesTimes(t *testing.T) {
 		t.Error(err)
 	}
 }
+
+func TestListDirectories(t *testing.T) {
+	var repo migration.DiskRepository = &migration.DiskRepositoryImpl{}
+	names, err := repo.List(".")
+	if err != nil {
+		t.Error(err)
+	}
+	if len(names) < 1 {
+		t.Fail()
+	}
+	var this_file_was_found bool
+	for _, name := range names {
+		if name == "disk_repository_test.go" {
+			this_file_was_found = true
+		}
+	}
+	if !this_file_was_found {
+		t.Fail()
+	}
+}
