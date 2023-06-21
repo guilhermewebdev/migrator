@@ -10,10 +10,16 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-type MigrationModule interface{}
+type MigrationModule interface {
+	Controller() Controller
+}
 
 type MigrationModuleImpl struct {
-	Controller Controller
+	controller Controller
+}
+
+func (mod *MigrationModuleImpl) Controller() Controller {
+	return mod.controller
 }
 
 func search_file_in_parent_directories(file_name string) (string, error) {
@@ -36,9 +42,10 @@ func search_file_in_parent_directories(file_name string) (string, error) {
 }
 
 func get_default_settings() Settings {
-	current_dir, err := filepath.Abs(".")
+	migrations_dir := "./migrations"
+	current_dir, err := filepath.Abs(migrations_dir)
 	if err != nil {
-		current_dir = "."
+		current_dir = migrations_dir
 	}
 	return Settings{
 		MigrationsDir: current_dir,
@@ -77,7 +84,7 @@ func NewMigrationModule() MigrationModule {
 		Service: service,
 	}
 	var module MigrationModule = &MigrationModuleImpl{
-		Controller: controller,
+		controller: controller,
 	}
 	return module
 }
