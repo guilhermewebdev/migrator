@@ -18,7 +18,7 @@ type ServiceImpl struct {
 }
 
 func (service *ServiceImpl) Create(name string) error {
-	snake_case_name := lib.SnackCase(name)
+	snake_case_name := lib.SnakeCase(name)
 	now := time.Now().UnixMilli()
 	migration_name := fmt.Sprint(now) + "_" + snake_case_name
 	new_migration_path := path.Join(service.Settings.MigrationsDir, migration_name)
