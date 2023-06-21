@@ -7,13 +7,20 @@ import (
 	"github.com/guilhermewebdev/migrator/modules/migration"
 )
 
-func clear() error {
-	err := os.RemoveAll("./test")
-	return err
+func clear() {
+	os.RemoveAll("./test")
+	os.RemoveAll("./mocks")
+}
+
+func createMocks() {
+	var repo migration.DiskRepository = &migration.DiskRepositoryImpl{}
+	repo.CreateFile("./mocks", "file.test")
+	os.WriteFile("./mocks/file.test", []byte("hello"), 0644)
 }
 
 func setup() func() {
 	clear()
+	createMocks()
 	return func() {
 		clear()
 	}
@@ -58,8 +65,9 @@ func TestCreateTheSameFileMultiplesTimes(t *testing.T) {
 }
 
 func TestListDirectories(t *testing.T) {
+	defer setup()()
 	var repo migration.DiskRepository = &migration.DiskRepositoryImpl{}
-	names, err := repo.List(".")
+	names, err := repo.List("./mocks")
 	if err != nil {
 		t.Error(err)
 	}
@@ -68,11 +76,23 @@ func TestListDirectories(t *testing.T) {
 	}
 	var this_file_was_found bool
 	for _, name := range names {
-		if name == "disk_repository_test.go" {
+		if name == "file.test" {
 			this_file_was_found = true
 		}
 	}
 	if !this_file_was_found {
+		t.Fail()
+	}
+}
+
+func TestReadFile(t *testing.T) {
+	defer setup()()
+	var repo migration.DiskRepository = &migration.DiskRepositoryImpl{}
+	data, err := repo.Read("./mocks/file.test")
+	if err != nil {
+		t.Error(err)
+	}
+	if data != "hello" {
 		t.Fail()
 	}
 }

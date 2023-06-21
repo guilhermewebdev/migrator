@@ -10,7 +10,7 @@ import (
 type DiskRepository interface {
 	CreateFile(path_name string, file_name string) error
 	List(dir string) ([]string, error)
-	// Read(path string) (string, error)
+	Read(file_path string) (string, error)
 }
 
 type DiskRepositoryImpl struct{}
@@ -42,4 +42,13 @@ func (repo *DiskRepositoryImpl) List(dir string) ([]string, error) {
 		names = append(names, entry.Name())
 	}
 	return names, nil
+}
+
+func (repo *DiskRepositoryImpl) Read(file_path string) (string, error) {
+	full_file_name, _ := filepath.Abs(file_path)
+	data, err := os.ReadFile(full_file_name)
+	if err != nil {
+		return "", err
+	}
+	return string(data), nil
 }
