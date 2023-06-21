@@ -76,8 +76,10 @@ func load_settings(settings_file_name string) Settings {
 
 func NewMigrationModule() MigrationModule {
 	var disk DiskRepository = &DiskRepositoryImpl{}
+	var db DBRepository = &DBRepositoryImpl{}
 	var service Service = &ServiceImpl{
 		Disk:     disk,
+		DB:       db,
 		Settings: load_settings("migrator.yml"),
 	}
 	var controller Controller = &ControllerImpl{

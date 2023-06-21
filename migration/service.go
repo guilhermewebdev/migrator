@@ -14,6 +14,7 @@ type Service interface {
 
 type ServiceImpl struct {
 	Disk     DiskRepository
+	DB       DBRepository
 	Settings Settings
 }
 

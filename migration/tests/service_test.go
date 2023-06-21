@@ -19,6 +19,8 @@ type diskRepositoryMock struct {
 	readErrorMock error
 }
 
+type dbRepositoryMock struct{}
+
 func (repo *diskRepositoryMock) Create(path_name string, file_name string) error {
 	full_path := path.Join(path_name, file_name)
 	repo.Creations = append(repo.Creations, full_path)
@@ -46,6 +48,7 @@ func get_service(diskMock migration.DiskRepository) migration.Service {
 	var service migration.Service = &migration.ServiceImpl{
 		Disk:     diskMock,
 		Settings: get_settings(),
+		DB:       &dbRepositoryMock{},
 	}
 	return service
 }

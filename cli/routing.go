@@ -22,8 +22,7 @@ func BuildRouter() *lib_cli.App {
 				Name:  "new",
 				Usage: "Creates a new migration",
 				Action: func(cCtx *lib_cli.Context) error {
-					err := create_migration(cCtx.Args().First())
-					return err
+					return create_migration(cCtx.Args().First())
 				},
 			},
 		},
