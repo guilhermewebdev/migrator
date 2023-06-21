@@ -8,14 +8,14 @@ import (
 )
 
 type DiskRepository interface {
-	CreateFile(path_name string, file_name string) error
+	Create(path_name string, file_name string) error
 	List(dir string) ([]string, error)
 	Read(file_path string) (string, error)
 }
 
 type DiskRepositoryImpl struct{}
 
-func (repo *DiskRepositoryImpl) CreateFile(path_name string, file_name string) error {
+func (repo *DiskRepositoryImpl) Create(path_name string, file_name string) error {
 	directory, _ := filepath.Abs(path_name)
 	if _, err := os.Stat(path_name); err != nil {
 		if err := os.MkdirAll(directory, fs.ModePerm); err != nil {

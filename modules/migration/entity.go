@@ -15,3 +15,7 @@ type Reference struct {
 	Date  time.Time
 	Order int
 }
+
+type Settings struct {
+	MigrationsDir string
+}

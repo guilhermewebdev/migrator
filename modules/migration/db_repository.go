@@ -1,4 +1,3 @@
 package migration
 
-type DBRepository interface {
-}
+type DBRepository interface{}
