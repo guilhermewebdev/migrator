@@ -3,7 +3,7 @@ package migration_test
 import (
 	"path"
 
-	"github.com/guilhermewebdev/migrator/migration"
+	"github.com/guilhermewebdev/migrator/conf"
 )
 
 type diskMock struct {
@@ -33,8 +33,8 @@ func (repo *diskMock) Read(file_path string) (string, error) {
 	return repo.readMock, repo.readErrorMock
 }
 
-func get_settings() migration.Settings {
-	settings := migration.Settings{
+func get_settings() conf.Settings {
+	settings := conf.Settings{
 		MigrationsDir: "./migrations",
 	}
 	return settings

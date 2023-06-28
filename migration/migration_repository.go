@@ -3,6 +3,7 @@ package migration
 import (
 	"path"
 
+	"github.com/guilhermewebdev/migrator/conf"
 	"github.com/guilhermewebdev/migrator/lib"
 )
 
@@ -13,7 +14,7 @@ type MigrationRepository interface {
 
 type MigrationRepositoryImpl struct {
 	Disk     lib.Disk
-	Settings Settings
+	Settings conf.Settings
 }
 
 func (r *MigrationRepositoryImpl) Create(name string) error {

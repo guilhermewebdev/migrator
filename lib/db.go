@@ -11,7 +11,7 @@ type ConnectionParams struct {
 	Driver string
 }
 
-func ConnectDb(p ConnectionParams) (*sql.DB, error) {
+func ConnectDB(p ConnectionParams) (*sql.DB, error) {
 	dsn := flag.String("dsn", p.DSN, "connection data source name")
 	flag.Parse()
 	pool, err := sql.Open(p.Driver, *dsn)

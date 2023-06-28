@@ -20,8 +20,3 @@ type Relation struct {
 	Migration *Migration
 	Reference *Reference
 }
-
-type Settings struct {
-	MigrationsDir       string `yaml:"migrations_dir"`
-	MigrationsTableName string `yaml:"migrations_table_name"`
-}

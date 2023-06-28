@@ -5,6 +5,8 @@ import (
 	_ "embed"
 	"fmt"
 	"time"
+
+	"github.com/guilhermewebdev/migrator/conf"
 )
 
 type ReferenceRepository interface {
@@ -17,7 +19,7 @@ type ReferenceRepository interface {
 
 type ReferenceRepositoryImpl struct {
 	DB       *sql.DB
-	Settings Settings
+	Settings conf.Settings
 }
 
 var (
