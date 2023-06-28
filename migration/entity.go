@@ -3,8 +3,8 @@ package migration
 import "time"
 
 type Migration struct {
-	ID        string
 	Name      string
+	Path      string
 	UpQuery   string
 	DownQuery string
 }
@@ -16,6 +16,12 @@ type Reference struct {
 	Order int
 }
 
+type Relation struct {
+	Migration *Migration
+	Reference *Reference
+}
+
 type Settings struct {
-	MigrationsDir string
+	MigrationsDir       string `yaml:"migrations_dir"`
+	MigrationsTableName string `yaml:"migrations_table_name"`
 }

@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/guilhermewebdev/migrator/lib"
 	"gopkg.in/yaml.v2"
 )
 
@@ -58,7 +59,8 @@ func get_settings_file_content(file_path string) Settings {
 		log.Fatal(err)
 	}
 	var settings Settings
-	err = yaml.Unmarshal(data, &settings)
+	data_with_envs := os.ExpandEnv(string(data))
+	err = yaml.Unmarshal([]byte(data_with_envs), &settings)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -74,13 +76,24 @@ func load_settings(settings_file_name string) Settings {
 	return settings
 }
 
-func NewMigrationModule() MigrationModule {
-	var disk DiskRepository = &DiskRepositoryImpl{}
-	var db DBRepository = &DBRepositoryImpl{}
-	var service Service = &ServiceImpl{
+func NewMigrationModule() (MigrationModule, error) {
+	var disk lib.Disk = &lib.DiskImpl{}
+	settings := load_settings("migrator.yml")
+	pool, err := lib.ConnectDb(lib.ConnectionParams{})
+	if err != nil {
+		return nil, err
+	}
+	var migrations MigrationRepository = &MigrationRepositoryImpl{
 		Disk:     disk,
-		DB:       db,
-		Settings: load_settings("migrator.yml"),
+		Settings: settings,
+	}
+	var db ReferenceRepository = &ReferenceRepositoryImpl{
+		Settings: settings,
+		DB:       pool,
+	}
+	var service Service = &ServiceImpl{
+		Migrations: migrations,
+		References: db,
 	}
 	var controller Controller = &ControllerImpl{
 		Service: service,
@@ -88,5 +101,5 @@ func NewMigrationModule() MigrationModule {
 	var module MigrationModule = &MigrationModuleImpl{
 		controller: controller,
 	}
-	return module
+	return module, nil
 }

@@ -1,0 +1,1 @@
+SELECT * FROM migrations ORDER BY datatime ASC;

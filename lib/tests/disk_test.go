@@ -1,10 +1,10 @@
-package migration_test
+package lib_test
 
 import (
 	"os"
 	"testing"
 
-	"github.com/guilhermewebdev/migrator/migration"
+	"github.com/guilhermewebdev/migrator/lib"
 )
 
 func clear() {
@@ -13,7 +13,7 @@ func clear() {
 }
 
 func createMocks() {
-	var repo migration.DiskRepository = &migration.DiskRepositoryImpl{}
+	var repo lib.Disk = &lib.DiskImpl{}
 	repo.Create("./mocks", "file.test")
 	os.WriteFile("./mocks/file.test", []byte("hello"), 0644)
 }
@@ -28,7 +28,7 @@ func setup() func() {
 
 func TestCreateFile(t *testing.T) {
 	defer setup()()
-	var repo migration.DiskRepository = &migration.DiskRepositoryImpl{}
+	var repo lib.Disk = &lib.DiskImpl{}
 	err := repo.Create("./test", "file.sql")
 	if err != nil {
 		t.Error(err)
@@ -40,7 +40,7 @@ func TestCreateFile(t *testing.T) {
 
 func TestCreateDeepFile(t *testing.T) {
 	defer setup()()
-	var repo migration.DiskRepository = &migration.DiskRepositoryImpl{}
+	var repo lib.Disk = &lib.DiskImpl{}
 	err := repo.Create("./test/testing/test/test/tes", "file.sql")
 	if err != nil {
 		t.Error(err)
@@ -52,7 +52,7 @@ func TestCreateDeepFile(t *testing.T) {
 
 func TestCreateTheSameFileMultiplesTimes(t *testing.T) {
 	defer setup()()
-	var repo migration.DiskRepository = &migration.DiskRepositoryImpl{}
+	var repo lib.Disk = &lib.DiskImpl{}
 	err := repo.Create("./test/testing/test/test/tes", "file.sql")
 	repo.Create("./test/testing/test/test/tes", "file.sql")
 	repo.Create("./test/testing/test/test/tes", "file.sql")
@@ -66,7 +66,7 @@ func TestCreateTheSameFileMultiplesTimes(t *testing.T) {
 
 func TestListDirectories(t *testing.T) {
 	defer setup()()
-	var repo migration.DiskRepository = &migration.DiskRepositoryImpl{}
+	var repo lib.Disk = &lib.DiskImpl{}
 	names, err := repo.List("./mocks")
 	if err != nil {
 		t.Error(err)
@@ -87,7 +87,7 @@ func TestListDirectories(t *testing.T) {
 
 func TestReadFile(t *testing.T) {
 	defer setup()()
-	var repo migration.DiskRepository = &migration.DiskRepositoryImpl{}
+	var repo lib.Disk = &lib.DiskImpl{}
 	data, err := repo.Read("./mocks/file.test")
 	if err != nil {
 		t.Error(err)

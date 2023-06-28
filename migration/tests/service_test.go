@@ -1,74 +1,75 @@
 package migration_test
 
 import (
-	"path"
 	"regexp"
 	"testing"
 
 	"github.com/guilhermewebdev/migrator/migration"
 )
 
-type diskRepositoryMock struct {
-	Creations     []string
-	Lists         []string
-	Reads         []string
-	creationMock  error
-	listMock      []string
-	listErrorMock error
-	readMock      string
-	readErrorMock error
+type referenceRepositoryMock struct {
+	listMock              []migration.Reference
+	listMockError         error
+	migrationsRan         []migration.Migration
+	migrationRunMockError error
+	lockStatus            bool
+	lockMockError         error
 }
 
-type dbRepositoryMock struct{}
-
-func (repo *diskRepositoryMock) Create(path_name string, file_name string) error {
-	full_path := path.Join(path_name, file_name)
-	repo.Creations = append(repo.Creations, full_path)
-	return repo.creationMock
+func (r *referenceRepositoryMock) List() ([]migration.Reference, error) {
+	return r.listMock, r.listMockError
 }
 
-func (repo *diskRepositoryMock) List(dir string) ([]string, error) {
-	repo.Lists = append(repo.Lists, dir)
-	return repo.listMock, repo.listErrorMock
+func (r *referenceRepositoryMock) Run(migration migration.Migration) error {
+	r.migrationsRan = append(r.migrationsRan, migration)
+	return r.migrationRunMockError
 }
 
-func (repo *diskRepositoryMock) Read(file_path string) (string, error) {
-	repo.Reads = append(repo.Reads, file_path)
-	return repo.readMock, repo.readErrorMock
+func (r *referenceRepositoryMock) Lock() error {
+	r.lockStatus = true
+	return r.lockMockError
 }
 
-func get_settings() migration.Settings {
-	settings := migration.Settings{
-		MigrationsDir: "./migrations",
-	}
-	return settings
+func (r *referenceRepositoryMock) Unlock() error {
+	r.lockStatus = false
+	return r.lockMockError
 }
 
-func get_service(diskMock migration.DiskRepository) migration.Service {
-	var service migration.Service = &migration.ServiceImpl{
-		Disk:     diskMock,
-		Settings: get_settings(),
-		DB:       &dbRepositoryMock{},
-	}
-	return service
+func (r *referenceRepositoryMock) IsLocked() (bool, error) {
+	return r.lockStatus, r.lockMockError
+}
+
+type migrationsRepositoryMock struct {
+	creations         []string
+	creationMockError error
+	listMock          []migration.Migration
+	listMockError     error
+}
+
+func (r *migrationsRepositoryMock) Create(name string) error {
+	r.creations = append(r.creations, name)
+	return r.creationMockError
+}
+
+func (r *migrationsRepositoryMock) List() ([]migration.Migration, error) {
+	return r.listMock, r.listMockError
 }
 
 func TestCreate(t *testing.T) {
-	var disk = &diskRepositoryMock{}
-	service := get_service(disk)
+	migrations := &migrationsRepositoryMock{}
+	references := &referenceRepositoryMock{}
+	var service migration.Service = &migration.ServiceImpl{
+		Migrations: migrations,
+		References: references,
+	}
 	err := service.Create("create_user")
 	if err != nil {
 		t.Error(err)
 	}
-	pattern := `^migrations/[0-9]{1,}_[A-z_]{1,}/(up|down).sql$`
-	matched0, err := regexp.MatchString(pattern, disk.Creations[0])
+	pattern := `^[0-9]{1,}_[A-z_]{1,}$`
+	matched0, err := regexp.MatchString(pattern, migrations.creations[0])
 	if err != nil || !matched0 {
-		t.Log(disk.Creations, matched0)
-		t.Fail()
-	}
-	matched1, err := regexp.MatchString(pattern, disk.Creations[1])
-	if err != nil || !matched1 {
-		t.Log(disk.Creations, matched1)
+		t.Log(migrations.creations, matched0)
 		t.Fail()
 	}
 }

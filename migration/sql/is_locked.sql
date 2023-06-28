@@ -1,0 +1,1 @@
+SELECT is_locked FROM TABLE migrations_lock LIMIT 1;
