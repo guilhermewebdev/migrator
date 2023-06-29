@@ -1,1 +1,1 @@
-SELECT * FROM migrations ORDER BY datatime ASC;
+SELECT * FROM migrations ORDER BY created_at ASC;

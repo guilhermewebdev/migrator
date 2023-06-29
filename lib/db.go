@@ -4,6 +4,11 @@ import (
 	"database/sql"
 	"flag"
 	"log"
+
+	_ "github.com/denisenkom/go-mssqldb"
+	_ "github.com/go-sql-driver/mysql"
+	_ "github.com/lib/pq"
+	_ "github.com/sijms/go-ora"
 )
 
 type ConnectionParams struct {

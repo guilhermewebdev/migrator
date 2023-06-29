@@ -15,7 +15,7 @@ type Disk interface {
 
 type DiskImpl struct{}
 
-func (repo *DiskImpl) Create(path_name string, file_name string) error {
+func (d *DiskImpl) Create(path_name string, file_name string) error {
 	directory, _ := filepath.Abs(path_name)
 	if _, err := os.Stat(path_name); err != nil {
 		if err := os.MkdirAll(directory, fs.ModePerm); err != nil {
@@ -32,7 +32,7 @@ func (repo *DiskImpl) Create(path_name string, file_name string) error {
 	return nil
 }
 
-func (repo *DiskImpl) List(dir string) ([]string, error) {
+func (d *DiskImpl) List(dir string) ([]string, error) {
 	entries, err := os.ReadDir(dir)
 	if err != nil {
 		return []string{}, nil
@@ -44,7 +44,7 @@ func (repo *DiskImpl) List(dir string) ([]string, error) {
 	return names, nil
 }
 
-func (repo *DiskImpl) Read(file_path string) (string, error) {
+func (d *DiskImpl) Read(file_path string) (string, error) {
 	full_file_name, _ := filepath.Abs(file_path)
 	data, err := os.ReadFile(full_file_name)
 	if err != nil {

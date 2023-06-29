@@ -1,1 +1,1 @@
-INSERT INTO migrations (key, datetime) VALUES (?, ?);
+INSERT INTO migrations (id, migration_name, created_at) VALUES (?, ?, ?);

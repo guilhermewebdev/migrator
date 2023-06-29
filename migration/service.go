@@ -37,6 +37,9 @@ func (s *ServiceImpl) relateMigrationWithReference() ([]Relation, error) {
 	if len(references) > len(migrations) {
 		return []Relation{}, fmt.Errorf("Migrations are corrupted")
 	}
+	if len(migrations) == 0 {
+		return []Relation{}, fmt.Errorf("No migrations to apply.")
+	}
 	var relations []Relation
 	references_related := 0
 	for i, migration := range migrations {
