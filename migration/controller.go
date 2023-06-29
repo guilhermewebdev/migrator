@@ -5,6 +5,7 @@ import "fmt"
 type Controller interface {
 	Create(name string) (string, error)
 	Up() (string, error)
+	Unlock() (string, error)
 }
 
 type ControllerImpl struct {
@@ -29,5 +30,16 @@ func (c *ControllerImpl) Up() (string, error) {
 	if err != nil {
 		return "Failed to execute migration", err
 	}
+	empty := Migration{}
+	if migration == empty {
+		return "No migrations to apply", nil
+	}
 	return "The migration \"" + migration.Name + "\" was ran.", nil
+}
+
+func (c *ControllerImpl) Unlock() (string, error) {
+	if err := c.Service.Unlock(); err != nil {
+		return "Failed to unlock migrations", err
+	}
+	return "The migrations are unlocked", nil
 }

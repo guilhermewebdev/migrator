@@ -2,6 +2,7 @@ package migration
 
 import (
 	"fmt"
+	"log"
 	"sort"
 	"time"
 
@@ -11,6 +12,7 @@ import (
 type Service interface {
 	Create(name string) error
 	Up() (Migration, error)
+	Unlock() error
 }
 
 type ServiceImpl struct {
@@ -18,11 +20,22 @@ type ServiceImpl struct {
 	References ReferenceRepository
 }
 
-func (s *ServiceImpl) Create(name string) error {
-	snake_case_name := lib.SnakeCase(name)
-	now := time.Now().UnixMilli()
-	migration_name := fmt.Sprint(now) + "_" + snake_case_name
-	return s.Migrations.Create(migration_name)
+func (s *ServiceImpl) semaphore() func() {
+	is_locked, err := s.References.IsLocked()
+	if err != nil {
+		log.Fatal(err)
+	}
+	if is_locked {
+		log.Fatal("The migrations are locked. Unlock it to continue.")
+	}
+	if err = s.References.Lock(); err != nil {
+		log.Fatal(err)
+	}
+	return func() {
+		if err = s.References.Unlock(); err != nil {
+			log.Fatal(err)
+		}
+	}
 }
 
 func (s *ServiceImpl) relateMigrationWithReference() ([]Relation, error) {
@@ -38,21 +51,22 @@ func (s *ServiceImpl) relateMigrationWithReference() ([]Relation, error) {
 		return []Relation{}, fmt.Errorf("Migrations are corrupted")
 	}
 	if len(migrations) == 0 {
-		return []Relation{}, fmt.Errorf("No migrations to apply.")
+		return []Relation{}, nil
 	}
 	var relations []Relation
 	references_related := 0
 	for i, migration := range migrations {
 		relation := Relation{
 			Migration: &migration,
+			Reference: &Reference{},
 		}
-		if references[i].Name == migration.Name {
+		if len(references) > 0 && references[i].Name == migration.Name {
 			relation.Reference = &references[i]
 			references_related += 1
 		} else {
 			for _, reference := range references {
 				if reference.Name == migration.Name {
-					relation.Reference = &references[i]
+					relation.Reference = &reference
 					references_related += 1
 					break
 				}
@@ -79,17 +93,34 @@ func (s *ServiceImpl) getNextMigration() (Migration, error) {
 			return *relation.Migration, nil
 		}
 	}
-	return Migration{}, fmt.Errorf("No migrations to apply")
+	return Migration{}, nil
+}
+
+func (s *ServiceImpl) Create(name string) error {
+	defer s.semaphore()()
+	snake_case_name := lib.SnakeCase(name)
+	now := time.Now().UnixMilli()
+	migration_name := fmt.Sprint(now) + "_" + snake_case_name
+	return s.Migrations.Create(migration_name)
 }
 
 func (s *ServiceImpl) Up() (Migration, error) {
+	defer s.semaphore()()
+	empty := Migration{}
 	migration, err := s.getNextMigration()
 	if err != nil {
-		return Migration{}, err
+		return empty, err
+	}
+	if migration == empty {
+		return empty, nil
 	}
 	err = s.References.Run(migration)
 	if err != nil {
-		return Migration{}, err
+		return empty, err
 	}
 	return migration, nil
+}
+
+func (s *ServiceImpl) Unlock() error {
+	return s.References.Unlock()
 }

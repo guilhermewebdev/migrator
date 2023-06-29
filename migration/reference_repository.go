@@ -35,14 +35,20 @@ var (
 	//go:embed sql/insert_reference.sql
 	insert_reference_sql string
 
-	//go:embed sql/set_lock.sql
-	set_lock_sql string
-
 	//go:embed sql/is_locked.sql
 	is_locked_sql string
 
 	//go:embed sql/next_id.sql
 	next_id_sql string
+
+	//go:embed sql/check_lock.sql
+	check_lock_sql string
+
+	//go:embed sql/insert_lock.sql
+	insert_lock_sql string
+
+	//go:embed sql/update_lock.sql
+	update_lock_sql string
 )
 
 func (r *ReferenceRepositoryImpl) preCreateTables() error {
@@ -107,9 +113,8 @@ func (r *ReferenceRepositoryImpl) IsLocked() (bool, error) {
 	if err := r.preCreateTables(); err != nil {
 		return false, err
 	}
-	query := is_locked_sql
 	row := r.DB.QueryRow(
-		query,
+		is_locked_sql,
 	)
 	var is_locked bool
 	row.Scan(&is_locked)
@@ -120,11 +125,15 @@ func (r *ReferenceRepositoryImpl) setLock(val bool) error {
 	if err := r.preCreateTables(); err != nil {
 		return err
 	}
-	query := set_lock_sql
-	_, err := r.DB.Exec(
-		query,
-		true,
-	)
+	var exists_data bool
+	r.DB.QueryRow(check_lock_sql).Scan(&exists_data)
+	var query string
+	if exists_data {
+		query = update_lock_sql
+	} else {
+		query = insert_lock_sql
+	}
+	_, err := r.DB.Exec(fmt.Sprintf(query, val))
 	return err
 }
 

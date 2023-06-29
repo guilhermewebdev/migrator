@@ -1,1 +1,3 @@
-SELECT is_locked FROM TABLE migrations_lock LIMIT 1;
+SELECT COALESCE(is_locked, false) AS is_locked
+FROM migrations_lock
+LIMIT 1;

@@ -4,7 +4,10 @@ services:
     image: golang
     volumes:
       - .:/usr/src/migrator
+      - ./entrypoint.sh:/usr/src/migrator/entrypoint.sh
+      - go_pkg:/go/pkg
     working_dir: /usr/src/migrator
+    entrypoint: ./entrypoint.sh
   mysql:
     image: mysql
     volumes:
@@ -25,3 +28,4 @@ services:
 volumes:
   mysql_data:
   postgres_data:
+  go_pkg:
