@@ -44,7 +44,7 @@ func TestGetDefaultSettings(t *testing.T) {
 	expected_settings := Settings{
 		MigrationsDir: migrations_dir,
 	}
-	received_settings := get_default_settings()
+	received_settings := get_default_settings(get_initial_settings())
 	if received_settings != expected_settings {
 		t.Log(received_settings, " is not ", expected_settings)
 		t.Fail()
@@ -52,7 +52,7 @@ func TestGetDefaultSettings(t *testing.T) {
 }
 
 func TestGetSettingsFileContent(t *testing.T) {
-	settings, _ := get_settings_file_content("./mocks/migrator.yml")
+	settings, _ := get_settings_file_content("./mocks/migrator.yml", get_initial_settings())
 	expected_settings := Settings{
 		MigrationsDir:       "./test",
 		MigrationsTableName: "testing_table_name",
@@ -66,14 +66,14 @@ func TestGetSettingsFileContent(t *testing.T) {
 }
 
 func TestGetSettingsFileContent_WithWrongSintaxe(t *testing.T) {
-	_, err := get_settings_file_content("./mocks/migrator-wrong.yml")
+	_, err := get_settings_file_content("./mocks/migrator-wrong.yml", get_initial_settings())
 	if err == nil {
 		t.Fail()
 	}
 }
 
 func TestLoadSettings_WithFile(t *testing.T) {
-	settings_from_file, _ := get_settings_file_content("./mocks/migrator.yml")
+	settings_from_file, _ := get_settings_file_content("./mocks/migrator.yml", get_initial_settings())
 	settings := LoadSettings("./mocks/migrator.yml")
 	if settings_from_file != settings {
 		t.Log(settings, " is not ", settings_from_file)
@@ -81,9 +81,23 @@ func TestLoadSettings_WithFile(t *testing.T) {
 }
 
 func TestLoadSettings_WithDefault(t *testing.T) {
-	default_settings := get_default_settings()
+	default_settings := get_default_settings(get_initial_settings())
 	settings := LoadSettings("unexistent.file")
 	if default_settings != settings {
 		t.Log(settings, " is not ", default_settings)
+	}
+}
+
+func TestGetInitialSettings(t *testing.T) {
+	os.Setenv("DB_DSN", "testing_dsn")
+	os.Setenv("DB_DRIVER", "testing_driver")
+	settings := get_initial_settings()
+	expected_settings := Settings{
+		DBDSN:    "testing_dsn",
+		DBDriver: "testing_driver",
+	}
+	if settings != expected_settings {
+		t.Log(settings, " is not ", expected_settings)
+		t.Fail()
 	}
 }

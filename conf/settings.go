@@ -36,36 +36,40 @@ func search_file_in_parent_directories(file_name string) (string, error) {
 	return "", fmt.Errorf("Arquivo '%s' não encontrado nos diretórios pais", file_name)
 }
 
+func get_initial_settings() Settings {
+	var settings Settings = Settings{
+		DBDSN:         os.Getenv("DB_DSN"),
+		DBDriver:      os.Getenv("DB_DRIVER"),
+		MigrationsDir: os.Getenv("MIGRATIONS_DIR"),
+	}
+	return settings
+}
+
 func LoadSettings(settings_file_name string) Settings {
+	initial_settings := get_initial_settings()
 	settings_path, err := search_file_in_parent_directories(settings_file_name)
 	if err != nil {
-		return get_default_settings()
+		return get_default_settings(initial_settings)
 	}
-	settings, err := get_settings_file_content(settings_path)
+	settings, err := get_settings_file_content(settings_path, initial_settings)
 	if err != nil {
 		log.Fatal(err)
 	}
 	return settings
 }
 
-func get_default_settings() Settings {
+func get_default_settings(settings Settings) Settings {
 	migrations_dir := "./migrations"
 	current_dir, err := filepath.Abs(migrations_dir)
 	if err != nil {
 		current_dir = migrations_dir
 	}
-	return Settings{
-		MigrationsDir: current_dir,
-	}
+	settings.MigrationsDir = current_dir
+	return settings
 }
 
-func get_settings_file_content(file_path string) (Settings, error) {
+func get_settings_file_content(file_path string, settings Settings) (Settings, error) {
 	data, err := ioutil.ReadFile(file_path)
-	var settings Settings = Settings{
-		DBDSN:         os.Getenv("DB_DSN"),
-		DBDriver:      os.Getenv("DB_DRIVER"),
-		MigrationsDir: os.Getenv("MIGRATIONS_DIR"),
-	}
 	if err != nil {
 		return settings, err
 	}
