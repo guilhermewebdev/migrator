@@ -86,6 +86,14 @@ func BuildRouter() *lib_cli.App {
 					return up(settings)
 				},
 			},
+			{
+				Name:  "unlock",
+				Usage: "Unlock migrations",
+				Action: func(cCtx *lib_cli.Context) error {
+					settings := load_settings(cCtx)
+					return unlock(settings)
+				},
+			},
 		},
 	}
 	return app

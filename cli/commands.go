@@ -26,3 +26,14 @@ func up(settings conf.Settings) error {
 	log.Print(response)
 	return nil
 }
+
+func unlock(settings conf.Settings) error {
+	module, err := migration.NewMigrationModule(settings)
+	response, err := module.Controller().Unlock()
+	if err != nil {
+		return err
+	}
+	log.Print(response)
+	return nil
+
+}
