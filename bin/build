@@ -1,0 +1,3 @@
+#!/bin/bash
+
+go build -v -o /usr/src/migrator/bin /usr/src/migrator
