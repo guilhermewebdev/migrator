@@ -1,0 +1,27 @@
+version: '3'
+services:
+  migrator:
+    image: golang
+    volumes:
+      - .:/usr/src/migrator
+    working_dir: /usr/src/migrator
+  mysql:
+    image: mysql
+    volumes:
+      - mysql_data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: pass
+      MYSQL_DATABASE: test
+      MYSQL_USER: user
+      MYSQL_PASSWORD: pass
+  postgres:
+    image: postgres
+    volumes:
+      - postgres_data:/var/lib/postgres/data
+    environment:
+      POSTGRES_DB: test
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
+volumes:
+  mysql_data:
+  postgres_data:
