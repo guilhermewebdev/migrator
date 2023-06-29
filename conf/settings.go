@@ -41,7 +41,10 @@ func LoadSettings(settings_file_name string) Settings {
 	if err != nil {
 		return get_default_settings()
 	}
-	settings := get_settings_file_content(settings_path)
+	settings, err := get_settings_file_content(settings_path)
+	if err != nil {
+		log.Fatal(err)
+	}
 	return settings
 }
 
@@ -56,16 +59,20 @@ func get_default_settings() Settings {
 	}
 }
 
-func get_settings_file_content(file_path string) Settings {
+func get_settings_file_content(file_path string) (Settings, error) {
 	data, err := ioutil.ReadFile(file_path)
-	if err != nil {
-		log.Fatal(err)
+	var settings Settings = Settings{
+		DBDSN:         os.Getenv("DB_DSN"),
+		DBDriver:      os.Getenv("DB_DRIVER"),
+		MigrationsDir: os.Getenv("MIGRATIONS_DIR"),
 	}
-	var settings Settings
+	if err != nil {
+		return settings, err
+	}
 	data_with_envs := os.ExpandEnv(string(data))
 	err = yaml.Unmarshal([]byte(data_with_envs), &settings)
 	if err != nil {
-		log.Fatal(err)
+		return settings, err
 	}
-	return settings
+	return settings, nil
 }
