@@ -58,3 +58,19 @@ func TestUp(t *testing.T) {
 		}
 	})
 }
+
+func TestNew(t *testing.T) {
+	os.Setenv("MIGRATIONS_DIR", "/usr/src/migrator/tmp/migrations")
+	if err := cli.Run([]string{"migrator", "new", "migration_test"}); err != nil {
+		t.Error(err)
+	}
+}
+
+func TestUnlock(t *testing.T) {
+	env(func(envs env_set) {
+		t.Log("Testing with envs: ", envs)
+		if err := cli.Run([]string{"migrator", "unlock"}); err != nil {
+			t.Error(err)
+		}
+	})
+}

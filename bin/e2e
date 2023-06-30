@@ -1,4 +1,5 @@
 #!/bin/bash
 
 clear
+mkdir -p /usr/src/migrator/tmp
 go test -v ./e2e

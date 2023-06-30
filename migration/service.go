@@ -124,5 +124,8 @@ func (s *ServiceImpl) Up() (Migration, error) {
 }
 
 func (s *ServiceImpl) Unlock() error {
+	if err := s.References.Prepare(); err != nil {
+		return err
+	}
 	return s.References.Unlock()
 }
