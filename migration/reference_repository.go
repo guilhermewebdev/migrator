@@ -5,7 +5,6 @@ import (
 	"database/sql"
 	_ "embed"
 	"fmt"
-	"log"
 	"text/template"
 	"time"
 
@@ -75,7 +74,6 @@ func (r *ReferenceRepositoryImpl) format(query string, values ...P) (string, err
 	if err := tmpl.Execute(&msg, variables); err != nil {
 		return "", err
 	}
-	log.Println(msg.String(), "\n")
 	return msg.String(), nil
 }
 
@@ -150,7 +148,6 @@ func (r *ReferenceRepositoryImpl) List() ([]Reference, error) {
 }
 
 func (r *ReferenceRepositoryImpl) Run(m Migration) error {
-	log.Println(m.UpQuery, "\n")
 	if _, err := r.DB.Exec(m.UpQuery); err != nil {
 		return err
 	}

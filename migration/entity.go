@@ -17,6 +17,6 @@ type Reference struct {
 }
 
 type Relation struct {
-	Migration *Migration
-	Reference *Reference
+	Migration Migration
+	Reference Reference
 }

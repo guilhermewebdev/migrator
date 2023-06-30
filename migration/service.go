@@ -60,16 +60,16 @@ func (s *ServiceImpl) relateMigrationWithReference() ([]Relation, error) {
 	references_related := 0
 	for i, migration := range migrations {
 		relation := Relation{
-			Migration: &migration,
-			Reference: &Reference{},
+			Migration: migration,
+			Reference: Reference{},
 		}
-		if len(references) > 0 && references[i].Name == migration.Name {
-			relation.Reference = &references[i]
+		if len(references) > i && references[i].Name == migration.Name {
+			relation.Reference = references[i]
 			references_related += 1
 		} else {
 			for _, reference := range references {
 				if reference.Name == migration.Name {
-					relation.Reference = &reference
+					relation.Reference = reference
 					references_related += 1
 					break
 				}
@@ -93,7 +93,7 @@ func (s *ServiceImpl) getNextMigration() (Migration, error) {
 	}
 	for _, relation := range relations {
 		if relation.Reference.Name == "" {
-			return *relation.Migration, nil
+			return relation.Migration, nil
 		}
 	}
 	return Migration{}, nil
