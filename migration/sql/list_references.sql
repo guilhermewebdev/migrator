@@ -1,1 +1,1 @@
-SELECT * FROM migrations ORDER BY created_at ASC;
+SELECT * FROM {{.migrations_table}} ORDER BY created_at ASC;

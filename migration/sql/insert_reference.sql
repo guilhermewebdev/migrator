@@ -1,1 +1,3 @@
-INSERT INTO migrations (id, migration_name, created_at) VALUES (?, ?, ?);
+INSERT 
+    INTO {{.migrations_table}} (id, migration_key, created_at) 
+    VALUES ({{.id}}, '{{.migration_key}}', '{{.created_at}}');

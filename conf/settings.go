@@ -13,8 +13,8 @@ import (
 type Settings struct {
 	MigrationsDir       string `yaml:"migrations_dir"`
 	MigrationsTableName string `yaml:"migrations_table_name"`
-	DBDSN               string `yaml:"db_dsn"`
-	DBDriver            string `yaml:"db_driver"`
+	DB_DSN              string `yaml:"db_dsn"`
+	DB_Driver           string `yaml:"db_driver"`
 }
 
 func search_file_in_parent_directories(file_name string) (string, error) {
@@ -38,9 +38,10 @@ func search_file_in_parent_directories(file_name string) (string, error) {
 
 func get_initial_settings() Settings {
 	var settings Settings = Settings{
-		DBDSN:         os.Getenv("DB_DSN"),
-		DBDriver:      os.Getenv("DB_DRIVER"),
-		MigrationsDir: os.Getenv("MIGRATIONS_DIR"),
+		DB_DSN:              os.Getenv("DB_DSN"),
+		DB_Driver:           os.Getenv("DB_DRIVER"),
+		MigrationsDir:       os.Getenv("MIGRATIONS_DIR"),
+		MigrationsTableName: os.Getenv("MIGRATIONS_TABLE"),
 	}
 	return settings
 }
@@ -65,6 +66,7 @@ func get_default_settings(settings Settings) Settings {
 		current_dir = migrations_dir
 	}
 	settings.MigrationsDir = current_dir
+	settings.MigrationsTableName = "migrations"
 	return settings
 }
 

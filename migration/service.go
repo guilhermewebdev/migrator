@@ -105,6 +105,7 @@ func (s *ServiceImpl) Create(name string) error {
 }
 
 func (s *ServiceImpl) Up() (Migration, error) {
+	s.References.Prepare()
 	defer s.semaphore()()
 	empty := Migration{}
 	migration, err := s.getNextMigration()

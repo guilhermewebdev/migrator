@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS migrations (
+CREATE TABLE IF NOT EXISTS {{.migrations_table}} (
     id INT PRIMARY KEY NOT NULL,
     migration_key VARCHAR(128) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP

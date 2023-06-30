@@ -20,11 +20,15 @@ func load_settings(cCtx *lib_cli.Context) conf.Settings {
 	}
 	dsn_from_args := cCtx.StringSlice("dsn")
 	if len(dsn_from_args) > 0 {
-		settings.DBDSN = dsn_from_args[0]
+		settings.DB_DSN = dsn_from_args[0]
 	}
 	driver_from_args := cCtx.StringSlice("driver")
 	if len(driver_from_args) > 0 {
-		settings.DBDriver = driver_from_args[0]
+		settings.DB_Driver = driver_from_args[0]
+	}
+	table_name_from_args := cCtx.StringSlice("table")
+	if len(table_name_from_args) > 0 {
+		settings.MigrationsTableName = table_name_from_args[0]
 	}
 	return settings
 }
@@ -61,6 +65,13 @@ func BuildRouter() *lib_cli.App {
 				Aliases: []string{"r"},
 				Usage:   "Database driver (mysql, postgres...)",
 				EnvVars: []string{"DB_DRIVER"},
+			},
+			&lib_cli.StringFlag{
+				Name:    "table",
+				Value:   "migrations",
+				Aliases: []string{"t"},
+				Usage:   "Migrations table name",
+				EnvVars: []string{"MIGRATIONS_TABLE"},
 			},
 		},
 		Authors: []*lib_cli.Author{

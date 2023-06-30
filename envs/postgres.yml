@@ -1,4 +1,4 @@
 migrations_dir: ./migrations
-migrations_table_name: testing_table_name
+migrations_table_name: migrations
 db_dsn: "postgres://user:pass@postgres:5432/test?sslmode=disable"
 db_driver: postgres

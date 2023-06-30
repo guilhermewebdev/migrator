@@ -1,2 +1,2 @@
-UPDATE migrations_lock
-SET is_locked = %t;
+UPDATE {{.migrations_lock_table}}
+SET is_locked = {{.is_locked}};

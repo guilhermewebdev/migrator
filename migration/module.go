@@ -20,8 +20,8 @@ func (mod *MigrationModuleImpl) Controller() Controller {
 func NewMigrationModule(settings conf.Settings) (MigrationModule, error) {
 	var disk lib.Disk = &lib.DiskImpl{}
 	pool, err := lib.ConnectDB(lib.ConnectionParams{
-		DSN:    settings.DBDSN,
-		Driver: settings.DBDriver,
+		DSN:    settings.DB_DSN,
+		Driver: settings.DB_Driver,
 	})
 	if err != nil {
 		return nil, err

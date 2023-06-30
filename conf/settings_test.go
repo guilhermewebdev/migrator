@@ -56,8 +56,8 @@ func TestGetSettingsFileContent(t *testing.T) {
 	expected_settings := Settings{
 		MigrationsDir:       "./test",
 		MigrationsTableName: "testing_table_name",
-		DBDSN:               "testing_dsn",
-		DBDriver:            "testing_driver",
+		DB_DSN:              "testing_dsn",
+		DB_Driver:           "testing_driver",
 	}
 	if settings != expected_settings {
 		t.Log(settings, " is not ", expected_settings)
@@ -93,8 +93,8 @@ func TestGetInitialSettings(t *testing.T) {
 	os.Setenv("DB_DRIVER", "testing_driver")
 	settings := get_initial_settings()
 	expected_settings := Settings{
-		DBDSN:    "testing_dsn",
-		DBDriver: "testing_driver",
+		DB_DSN:    "testing_dsn",
+		DB_Driver: "testing_driver",
 	}
 	if settings != expected_settings {
 		t.Log(settings, " is not ", expected_settings)
