@@ -6,12 +6,18 @@ import (
 )
 
 func SnakeCase(text string) string {
-	words := strings.FieldsFunc(text, func(r rune) bool {
-		return unicode.IsSpace(r) || unicode.IsPunct(r)
-	})
-	snake_case_text := strings.ToLower(words[0])
-	for i := 1; i < len(words); i++ {
-		snake_case_text += "_" + strings.ToLower(words[i])
+	var result strings.Builder
+	for i, char := range text {
+		if unicode.IsSpace(char) {
+			result.WriteRune('_')
+		} else if unicode.IsUpper(char) {
+			if i > 0 && unicode.IsLower(rune(text[i-1])) {
+				result.WriteRune('_')
+			}
+			result.WriteRune(unicode.ToLower(char))
+		} else {
+			result.WriteRune(char)
+		}
 	}
-	return snake_case_text
+	return result.String()
 }
