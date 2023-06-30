@@ -1,5 +1,8 @@
 #!/bin/bash
 
 clear
-mkdir -p /usr/src/migrator/tmp
-go test -v ./e2e
+REPORTS=$SRC_DIR/tmp/reports/e2e
+mkdir -p $REPORTS
+go test -benchmem \
+    -trace $REPORTS/trace.out \
+    -v ./e2e

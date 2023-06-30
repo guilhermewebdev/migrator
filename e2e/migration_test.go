@@ -1,4 +1,4 @@
-package int_tests
+package e2e_tests
 
 import (
 	"log"
