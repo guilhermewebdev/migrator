@@ -1,4 +1,5 @@
 migrator
-migrations
+migrations/
 migrate
 conf-temp.yml
+tmp/

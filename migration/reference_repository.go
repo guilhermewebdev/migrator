@@ -104,9 +104,13 @@ func (r *ReferenceRepositoryImpl) query_row(query string, values ...P) *sql.Row 
 }
 
 func (r *ReferenceRepositoryImpl) Prepare() error {
-	_, err := r.exec(create_reference_table_sql)
-	_, err = r.exec(create_lock_table_sql)
-	return err
+	if _, err := r.exec(create_reference_table_sql); err != nil {
+		return err
+	}
+	if _, err := r.exec(create_lock_table_sql); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (r *ReferenceRepositoryImpl) genReferenceId() int {

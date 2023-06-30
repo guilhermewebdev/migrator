@@ -21,6 +21,9 @@ type ServiceImpl struct {
 }
 
 func (s *ServiceImpl) semaphore() func() {
+	if err := s.References.Prepare(); err != nil {
+		log.Fatal(err)
+	}
 	is_locked, err := s.References.IsLocked()
 	if err != nil {
 		log.Fatal(err)
@@ -97,7 +100,6 @@ func (s *ServiceImpl) getNextMigration() (Migration, error) {
 }
 
 func (s *ServiceImpl) Create(name string) error {
-	defer s.semaphore()()
 	snake_case_name := lib.SnakeCase(name)
 	now := time.Now().UnixMilli()
 	migration_name := fmt.Sprint(now) + "_" + snake_case_name
@@ -105,7 +107,6 @@ func (s *ServiceImpl) Create(name string) error {
 }
 
 func (s *ServiceImpl) Up() (Migration, error) {
-	s.References.Prepare()
 	defer s.semaphore()()
 	empty := Migration{}
 	migration, err := s.getNextMigration()

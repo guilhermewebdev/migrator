@@ -1,14 +1,15 @@
 package cli
 
 import (
+	"database/sql"
 	"log"
 
 	"github.com/guilhermewebdev/migrator/conf"
 	"github.com/guilhermewebdev/migrator/migration"
 )
 
-func create_migration(settings conf.Settings, migration_name string) error {
-	module, err := migration.NewMigrationModule(settings)
+func create_migration(pool *sql.DB, settings conf.Settings, migration_name string) error {
+	module, err := migration.NewMigrationModule(settings, pool)
 	response, err := module.Controller().Create(migration_name)
 	if err != nil {
 		return err
@@ -17,8 +18,8 @@ func create_migration(settings conf.Settings, migration_name string) error {
 	return nil
 }
 
-func up(settings conf.Settings) error {
-	module, err := migration.NewMigrationModule(settings)
+func up(pool *sql.DB, settings conf.Settings) error {
+	module, err := migration.NewMigrationModule(settings, pool)
 	response, err := module.Controller().Up()
 	if err != nil {
 		return err
@@ -27,8 +28,8 @@ func up(settings conf.Settings) error {
 	return nil
 }
 
-func unlock(settings conf.Settings) error {
-	module, err := migration.NewMigrationModule(settings)
+func unlock(pool *sql.DB, settings conf.Settings) error {
+	module, err := migration.NewMigrationModule(settings, pool)
 	response, err := module.Controller().Unlock()
 	if err != nil {
 		return err
