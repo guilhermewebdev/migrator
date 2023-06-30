@@ -1,3 +1,4 @@
 SELECT *
 FROM {{.migrations_table}}
-ORDER BY created_at ASC;
+ORDER BY migration_key DESC
+LIMIT 1;

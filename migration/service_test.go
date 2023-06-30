@@ -10,6 +10,8 @@ type referenceRepositoryMock struct {
 	listMockError         error
 	migrationsRan         []Migration
 	migrationRunMockError error
+	referenceMock         Reference
+	referenceMockError    error
 	lockStatus            bool
 	lockMockError         error
 	prepareMockError      error
@@ -23,9 +25,18 @@ func (r *referenceRepositoryMock) List() ([]Reference, error) {
 	return r.listMock, r.listMockError
 }
 
-func (r *referenceRepositoryMock) Run(migration Migration) error {
+func (r *referenceRepositoryMock) Up(migration Migration) error {
 	r.migrationsRan = append(r.migrationsRan, migration)
 	return r.migrationRunMockError
+}
+
+func (r *referenceRepositoryMock) Down(migration Migration) error {
+	r.migrationsRan = append(r.migrationsRan, migration)
+	return r.migrationRunMockError
+}
+
+func (r *referenceRepositoryMock) GetLast() (Reference, error) {
+	return r.referenceMock, r.referenceMockError
 }
 
 func (r *referenceRepositoryMock) Lock() error {
@@ -43,10 +54,12 @@ func (r *referenceRepositoryMock) IsLocked() (bool, error) {
 }
 
 type migrationsRepositoryMock struct {
-	creations         []string
-	creationMockError error
-	listMock          []Migration
-	listMockError     error
+	creations          []string
+	creationMockError  error
+	listMock           []Migration
+	listMockError      error
+	migrationMock      Migration
+	migrationErrorMock error
 }
 
 func (r *migrationsRepositoryMock) Create(name string) error {
@@ -58,7 +71,11 @@ func (r *migrationsRepositoryMock) List() ([]Migration, error) {
 	return r.listMock, r.listMockError
 }
 
-func TestCreate(t *testing.T) {
+func (r *migrationsRepositoryMock) Read(name string) (Migration, error) {
+	return r.migrationMock, r.migrationErrorMock
+}
+
+func TestService_Create(t *testing.T) {
 	migrations := &migrationsRepositoryMock{}
 	references := &referenceRepositoryMock{}
 	var service Service = &ServiceImpl{
@@ -77,7 +94,7 @@ func TestCreate(t *testing.T) {
 	}
 }
 
-func TestUp_WithPendingMigration(t *testing.T) {
+func TestService_Up_WithPendingMigration(t *testing.T) {
 	pending_migration := Migration{
 		Name: "testing",
 		Path: "testing",
@@ -99,7 +116,7 @@ func TestUp_WithPendingMigration(t *testing.T) {
 	}
 }
 
-func TestUp_WhenAllMigrationsAreRan(t *testing.T) {
+func TestService_Up_WhenAllMigrationsAreRan(t *testing.T) {
 	migrations := &migrationsRepositoryMock{
 		listMock: []Migration{{
 			Name: "testing",
@@ -125,7 +142,7 @@ func TestUp_WhenAllMigrationsAreRan(t *testing.T) {
 	}
 }
 
-func TestUp_WhenHasNoMigrations(t *testing.T) {
+func TestService_Up_WhenHasNoMigrations(t *testing.T) {
 	migrations := &migrationsRepositoryMock{}
 	references := &referenceRepositoryMock{}
 	var service Service = &ServiceImpl{
@@ -142,7 +159,7 @@ func TestUp_WhenHasNoMigrations(t *testing.T) {
 	}
 }
 
-func TestUp_WhenMigrationsAreCorrupted(t *testing.T) {
+func TestService_Up_WhenMigrationsAreCorrupted(t *testing.T) {
 	expected_migration := Migration{}
 	migrations := &migrationsRepositoryMock{
 		listMock: []Migration{
@@ -173,7 +190,7 @@ func TestUp_WhenMigrationsAreCorrupted(t *testing.T) {
 	}
 }
 
-func TestUp_WhenMigrationsAreDisorderly(t *testing.T) {
+func TestService_Up_WhenMigrationsAreDisorderly(t *testing.T) {
 	migrations := &migrationsRepositoryMock{
 		listMock: []Migration{
 			{
@@ -214,5 +231,40 @@ func TestUp_WhenMigrationsAreDisorderly(t *testing.T) {
 	}
 	if ran != expected {
 		t.Fatal(ran, " is not ", expected)
+	}
+}
+
+func TestService_Unlock(t *testing.T) {
+	migrations := &migrationsRepositoryMock{}
+	references := &referenceRepositoryMock{}
+	var service Service = &ServiceImpl{
+		Migrations: migrations,
+		References: references,
+	}
+	if err := service.Unlock(); err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestService_Down(t *testing.T) {
+	expected_migration := Migration{Name: "2_testing", Path: "testing"}
+	migrations := &migrationsRepositoryMock{
+		migrationMock: expected_migration,
+	}
+	references := &referenceRepositoryMock{
+		referenceMock: Reference{
+			Name: "2_testing",
+		},
+	}
+	var service Service = &ServiceImpl{
+		Migrations: migrations,
+		References: references,
+	}
+	migration, err := service.Down()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if migration != expected_migration {
+		t.Fatal(migration, " is not ", expected_migration)
 	}
 }

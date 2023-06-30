@@ -14,11 +14,17 @@ import (
 
 type ReferenceRepository interface {
 	List() ([]Reference, error)
-	Run(migration Migration) error
+	Up(migration Migration) error
+	Down(migration Migration) error
 	Lock() error
 	Unlock() error
 	IsLocked() (bool, error)
 	Prepare() error
+	GetLast() (Reference, error)
+}
+
+type scannable interface {
+	Scan(dest ...any) error
 }
 
 type ReferenceRepositoryImpl struct {
@@ -53,6 +59,12 @@ var (
 
 	//go:embed sql/update_lock.sql
 	update_lock_sql string
+
+	//go:embed sql/select_last_reference.sql
+	select_last_reference_sql string
+
+	//go:embed sql/delete_reference.sql
+	delete_reference_sql string
 )
 
 const DB_TIMESTAMP_FORMAT = "2006-01-02 15:04:05"
@@ -93,12 +105,28 @@ func (r *ReferenceRepositoryImpl) query(query string, values ...P) (*sql.Rows, e
 	return r.DB.Query(formatted)
 }
 
-func (r *ReferenceRepositoryImpl) query_row(query string, values ...P) *sql.Row {
+func (r *ReferenceRepositoryImpl) query_row(query string, values ...P) (*sql.Row, error) {
 	formatted, err := r.format(query, values...)
 	if err != nil {
-		return &sql.Row{}
+		return &sql.Row{}, err
 	}
-	return r.DB.QueryRow(formatted)
+	row := r.DB.QueryRow(formatted)
+	return row, row.Err()
+}
+
+func (r *ReferenceRepositoryImpl) scan_ref(row scannable) (Reference, error) {
+	var reference Reference
+	var date []byte
+	err := row.Scan(
+		&reference.ID,
+		&reference.Name,
+		&date,
+	)
+	if err != nil {
+		return reference, err
+	}
+	reference.Date, err = time.Parse(DB_TIMESTAMP_FORMAT, string(date))
+	return reference, err
 }
 
 func (r *ReferenceRepositoryImpl) Prepare() error {
@@ -111,11 +139,14 @@ func (r *ReferenceRepositoryImpl) Prepare() error {
 	return nil
 }
 
-func (r *ReferenceRepositoryImpl) genReferenceId() int {
-	row := r.query_row(next_id_sql)
+func (r *ReferenceRepositoryImpl) genReferenceId() (int, error) {
+	row, err := r.query_row(next_id_sql)
+	if err != nil {
+		return 0, err
+	}
 	var next_id int
 	row.Scan(&next_id)
-	return next_id
+	return next_id, row.Err()
 }
 
 func (r *ReferenceRepositoryImpl) List() ([]Reference, error) {
@@ -126,16 +157,7 @@ func (r *ReferenceRepositoryImpl) List() ([]Reference, error) {
 		return references, err
 	}
 	for rows.Next() {
-		var reference Reference
-		var date []byte
-		if err := rows.Scan(
-			&reference.ID,
-			&reference.Name,
-			&date,
-		); err != nil {
-			return references, err
-		}
-		reference.Date, err = time.Parse(DB_TIMESTAMP_FORMAT, string(date))
+		reference, err := r.scan_ref(rows)
 		if err != nil {
 			return references, err
 		}
@@ -147,24 +169,42 @@ func (r *ReferenceRepositoryImpl) List() ([]Reference, error) {
 	return references, nil
 }
 
-func (r *ReferenceRepositoryImpl) Run(m Migration) error {
+func (r *ReferenceRepositoryImpl) Up(m Migration) error {
 	if _, err := r.DB.Exec(m.UpQuery); err != nil {
 		return err
 	}
-	_, err := r.exec(insert_reference_sql, P{
-		"id":            r.genReferenceId(),
+	id, err := r.genReferenceId()
+	if err != nil {
+		return err
+	}
+	if _, err = r.exec(insert_reference_sql, P{
+		"id":            id,
 		"migration_key": m.Name,
 		"created_at":    time.Now().UTC().Format(DB_TIMESTAMP_FORMAT),
-	})
-	if err != nil {
+	}); err != nil {
 		return err
 	}
 	fmt.Print("OK: ", m.Name)
 	return nil
 }
 
+func (r *ReferenceRepositoryImpl) Down(m Migration) error {
+	if _, err := r.DB.Exec(m.DownQuery); err != nil {
+		return err
+	}
+	if _, err := r.exec(delete_reference_sql, P{
+		"migration_key": m.Name,
+	}); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (r *ReferenceRepositoryImpl) IsLocked() (bool, error) {
-	row := r.query_row(is_locked_sql)
+	row, err := r.query_row(is_locked_sql)
+	if err != nil {
+		return false, err
+	}
 	var is_locked bool
 	row.Scan(&is_locked)
 	return is_locked, row.Err()
@@ -172,7 +212,11 @@ func (r *ReferenceRepositoryImpl) IsLocked() (bool, error) {
 
 func (r *ReferenceRepositoryImpl) setLock(is_locked bool) error {
 	var exists_data bool
-	if err := r.query_row(check_lock_sql).Scan(&exists_data); err != nil {
+	row, err := r.query_row(check_lock_sql)
+	if err != nil {
+		return err
+	}
+	if err := row.Scan(&exists_data); err != nil {
 		return err
 	}
 	var query string
@@ -181,7 +225,7 @@ func (r *ReferenceRepositoryImpl) setLock(is_locked bool) error {
 	} else {
 		query = insert_lock_sql
 	}
-	_, err := r.exec(query, P{"is_locked": is_locked})
+	_, err = r.exec(query, P{"is_locked": is_locked})
 	return err
 }
 
@@ -191,4 +235,13 @@ func (r *ReferenceRepositoryImpl) Lock() error {
 
 func (r *ReferenceRepositoryImpl) Unlock() error {
 	return r.setLock(false)
+}
+
+func (r *ReferenceRepositoryImpl) GetLast() (Reference, error) {
+	row, err := r.query_row(select_last_reference_sql)
+	if err != nil {
+		return Reference{}, err
+	}
+	reference, err := r.scan_ref(row)
+	return reference, err
 }

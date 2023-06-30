@@ -10,6 +10,7 @@ import (
 type MigrationRepository interface {
 	Create(name string) error
 	List() ([]Migration, error)
+	Read(key string) (Migration, error)
 }
 
 type MigrationRepositoryImpl struct {
@@ -35,22 +36,30 @@ func (r *MigrationRepositoryImpl) List() ([]Migration, error) {
 	}
 	var migrations []Migration
 	for _, key := range keys {
-		dir := path.Join(r.Settings.MigrationsDir, key)
-		up, err := r.Disk.Read(path.Join(dir, "up.sql"))
+		migration, err := r.Read(key)
 		if err != nil {
 			return migrations, err
-		}
-		down, err := r.Disk.Read(path.Join(dir, "down.sql"))
-		if err != nil {
-			return migrations, err
-		}
-		migration := Migration{
-			Name:      key,
-			Path:      path.Join(r.Settings.MigrationsDir, key),
-			UpQuery:   up,
-			DownQuery: down,
 		}
 		migrations = append(migrations, migration)
 	}
 	return migrations, nil
+}
+
+func (r *MigrationRepositoryImpl) Read(key string) (Migration, error) {
+	empty := Migration{}
+	dir := path.Join(r.Settings.MigrationsDir, key)
+	up, err := r.Disk.Read(path.Join(dir, "up.sql"))
+	if err != nil {
+		return empty, err
+	}
+	down, err := r.Disk.Read(path.Join(dir, "down.sql"))
+	if err != nil {
+		return empty, err
+	}
+	return Migration{
+		Name:      key,
+		Path:      path.Join(r.Settings.MigrationsDir, key),
+		UpQuery:   up,
+		DownQuery: down,
+	}, nil
 }

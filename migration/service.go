@@ -13,6 +13,7 @@ type Service interface {
 	Create(name string) error
 	Up() (Migration, error)
 	Unlock() error
+	Down() (Migration, error)
 }
 
 type ServiceImpl struct {
@@ -116,7 +117,7 @@ func (s *ServiceImpl) Up() (Migration, error) {
 	if migration == empty {
 		return empty, nil
 	}
-	err = s.References.Run(migration)
+	err = s.References.Up(migration)
 	if err != nil {
 		return empty, err
 	}
@@ -128,4 +129,19 @@ func (s *ServiceImpl) Unlock() error {
 		return err
 	}
 	return s.References.Unlock()
+}
+
+func (s *ServiceImpl) Down() (Migration, error) {
+	defer s.semaphore()()
+	empty := Migration{}
+	last_reference, err := s.References.GetLast()
+	if err != nil {
+		return empty, err
+	}
+	migration, err := s.Migrations.Read(last_reference.Name)
+	if err != nil {
+		return empty, err
+	}
+	err = s.References.Down(migration)
+	return migration, err
 }
