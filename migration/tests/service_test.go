@@ -14,6 +14,11 @@ type referenceRepositoryMock struct {
 	migrationRunMockError error
 	lockStatus            bool
 	lockMockError         error
+	prepareMockError      error
+}
+
+func (r *referenceRepositoryMock) Prepare() error {
+	return r.prepareMockError
 }
 
 func (r *referenceRepositoryMock) List() ([]migration.Reference, error) {

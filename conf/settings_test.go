@@ -42,7 +42,8 @@ func TestSearchFileInParentDirectories_AndNotFindIt(t *testing.T) {
 func TestGetDefaultSettings(t *testing.T) {
 	migrations_dir, _ := filepath.Abs("./migrations")
 	expected_settings := Settings{
-		MigrationsDir: migrations_dir,
+		MigrationsDir:       migrations_dir,
+		MigrationsTableName: "migrations",
 	}
 	received_settings := get_default_settings(get_initial_settings())
 	if received_settings != expected_settings {
