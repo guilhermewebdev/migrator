@@ -14,7 +14,7 @@ func create_migration(pool *sql.DB, settings conf.Settings, migration_name strin
 	if err != nil {
 		return err
 	}
-	log.Print(response)
+	log.Println(response)
 	return nil
 }
 
@@ -24,7 +24,7 @@ func up(pool *sql.DB, settings conf.Settings) error {
 	if err != nil {
 		return err
 	}
-	log.Print(response)
+	log.Println(response)
 	return nil
 }
 
@@ -34,7 +34,16 @@ func unlock(pool *sql.DB, settings conf.Settings) error {
 	if err != nil {
 		return err
 	}
-	log.Print(response)
+	log.Println(response)
 	return nil
+}
 
+func down(pool *sql.DB, settings conf.Settings) error {
+	module, err := migration.NewMigrationModule(settings, pool)
+	response, err := module.Controller().Down()
+	if err != nil {
+		return err
+	}
+	log.Println(response)
+	return nil
 }

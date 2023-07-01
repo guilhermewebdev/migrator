@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"database/sql"
 	_ "embed"
-	"fmt"
+	"strings"
 	"text/template"
 	"time"
 
@@ -72,7 +72,7 @@ const DB_TIMESTAMP_FORMAT = "2006-01-02 15:04:05"
 type P map[string]any
 
 func (r *ReferenceRepositoryImpl) format(query string, values ...P) (string, error) {
-	var msg bytes.Buffer
+	var formatted bytes.Buffer
 	variables := P{}
 	for _, value := range values {
 		maps.Copy(variables, value)
@@ -83,10 +83,10 @@ func (r *ReferenceRepositoryImpl) format(query string, values ...P) (string, err
 	if err != nil {
 		return "", err
 	}
-	if err := tmpl.Execute(&msg, variables); err != nil {
+	if err := tmpl.Execute(&formatted, variables); err != nil {
 		return "", err
 	}
-	return msg.String(), nil
+	return formatted.String(), nil
 }
 
 func (r *ReferenceRepositoryImpl) exec(query string, values ...P) (sql.Result, error) {
@@ -125,7 +125,9 @@ func (r *ReferenceRepositoryImpl) scan_ref(row scannable) (Reference, error) {
 	if err != nil {
 		return reference, err
 	}
-	reference.Date, err = time.Parse(DB_TIMESTAMP_FORMAT, string(date))
+	without_z := strings.Replace(string(date), "Z", "", 1)
+	without_t := strings.Replace(without_z, "T", " ", 1)
+	reference.Date, err = time.Parse(DB_TIMESTAMP_FORMAT, without_t)
 	return reference, err
 }
 
@@ -184,7 +186,6 @@ func (r *ReferenceRepositoryImpl) Up(m Migration) error {
 	}); err != nil {
 		return err
 	}
-	fmt.Print("OK: ", m.Name)
 	return nil
 }
 

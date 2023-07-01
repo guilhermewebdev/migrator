@@ -24,7 +24,6 @@ func load_settings(ctx *lib_cli.Context) conf.Settings {
 	}
 	settings := conf.LoadSettings(settings_file)
 	migrations_dir_from_args := ctx.String("migrations")
-	log.Println(migrations_dir_from_args)
 	if len(migrations_dir_from_args) > 0 {
 		settings.MigrationsDir = migrations_dir_from_args
 	}
@@ -123,6 +122,13 @@ func BuildRouter() *lib_cli.App {
 				Usage: "Execute the next migration",
 				Action: call(func(ctx context) error {
 					return up(ctx.pool, ctx.s)
+				}),
+			},
+			{
+				Name:  "down",
+				Usage: "Rollback the last migration",
+				Action: call(func(ctx context) error {
+					return down(ctx.pool, ctx.s)
 				}),
 			},
 			{

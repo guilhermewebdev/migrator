@@ -54,7 +54,7 @@ func TestUp(t *testing.T) {
 	env(func(envs env_set) {
 		t.Log("Testing with envs: ", envs)
 		if err := cli.Run([]string{"migrator", "up"}); err != nil {
-			t.Error(err)
+			t.Fatal(err)
 		}
 	})
 }
@@ -62,7 +62,7 @@ func TestUp(t *testing.T) {
 func TestNew(t *testing.T) {
 	os.Setenv("MIGRATIONS_DIR", "/usr/src/migrator/tmp/migrations")
 	if err := cli.Run([]string{"migrator", "new", "migration_test"}); err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 }
 
@@ -70,7 +70,20 @@ func TestUnlock(t *testing.T) {
 	env(func(envs env_set) {
 		t.Log("Testing with envs: ", envs)
 		if err := cli.Run([]string{"migrator", "unlock"}); err != nil {
-			t.Error(err)
+			t.Fatal(err)
+		}
+	})
+}
+
+func TestDown(t *testing.T) {
+	os.Setenv("MIGRATIONS_DIR", "/usr/src/migrator/e2e/mocks/1")
+	env(func(envs env_set) {
+		t.Log("\nTesting with envs: ", envs, "\n")
+		if err := cli.Run([]string{"migrator", "up"}); err != nil {
+			t.Fatal(err)
+		}
+		if err := cli.Run([]string{"migrator", "down"}); err != nil {
+			t.Fatal(err)
 		}
 	})
 }
