@@ -1,7 +1,6 @@
 package cli
 
 import (
-	"database/sql"
 	"log"
 	"time"
 
@@ -13,7 +12,7 @@ import (
 type context struct {
 	s    conf.Settings
 	c    *lib_cli.Context
-	pool *sql.DB
+	pool lib.DB
 }
 
 func load_settings(ctx *lib_cli.Context) conf.Settings {

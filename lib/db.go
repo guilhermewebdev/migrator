@@ -17,7 +17,14 @@ type ConnectionParams struct {
 	Driver string
 }
 
-func ConnectDB(p ConnectionParams) (*sql.DB, error) {
+type DB interface {
+	Query(query string, args ...any) (*sql.Rows, error)
+	Exec(query string, args ...any) (sql.Result, error)
+	QueryRow(query string, args ...any) *sql.Row
+	Close() error
+}
+
+func ConnectDB(p ConnectionParams) (DB, error) {
 	if p.DSN == "" {
 		return &sql.DB{}, fmt.Errorf("Invalid DSN string")
 	}

@@ -1,8 +1,6 @@
 package migration
 
 import (
-	"database/sql"
-
 	"github.com/guilhermewebdev/migrator/conf"
 	"github.com/guilhermewebdev/migrator/lib"
 )
@@ -19,7 +17,7 @@ func (mod *MigrationModuleImpl) Controller() Controller {
 	return mod.controller
 }
 
-func NewMigrationModule(settings conf.Settings, pool *sql.DB) (MigrationModule, error) {
+func NewMigrationModule(settings conf.Settings, pool lib.DB) (MigrationModule, error) {
 	var disk lib.Disk = &lib.DiskImpl{}
 	var migrations MigrationRepository = &MigrationRepositoryImpl{
 		Disk:     disk,

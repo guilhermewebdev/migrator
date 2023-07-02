@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/guilhermewebdev/migrator/conf"
+	"github.com/guilhermewebdev/migrator/lib"
 	"golang.org/x/exp/maps"
 )
 
@@ -29,7 +30,7 @@ type scannable interface {
 }
 
 type ReferenceRepositoryImpl struct {
-	DB       *sql.DB
+	DB       lib.DB
 	Settings conf.Settings
 }
 
