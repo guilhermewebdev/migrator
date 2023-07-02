@@ -5,4 +5,4 @@ REPORTS=$SRC_DIR/tmp/reports/e2e
 mkdir -p $REPORTS
 go test -benchmem \
     -trace $REPORTS/trace.out \
-    -v ./e2e
+    -v ./e2e $@

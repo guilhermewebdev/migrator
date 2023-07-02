@@ -2,6 +2,7 @@ package lib
 
 import (
 	"database/sql"
+	"fmt"
 
 	_ "github.com/denisenkom/go-mssqldb"
 	_ "github.com/go-sql-driver/mysql"
@@ -17,6 +18,12 @@ type ConnectionParams struct {
 }
 
 func ConnectDB(p ConnectionParams) (*sql.DB, error) {
+	if p.DSN == "" {
+		return &sql.DB{}, fmt.Errorf("Invalid DSN string")
+	}
+	if p.Driver == "" {
+		return &sql.DB{}, fmt.Errorf("Invalid Driver string")
+	}
 	pool, err := sql.Open(p.Driver, p.DSN)
 	return pool, err
 }

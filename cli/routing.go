@@ -49,15 +49,15 @@ func call(action func(context) error) lib_cli.ActionFunc {
 			DSN:    settings.DB_DSN,
 			Driver: settings.DB_Driver,
 		})
+		if err != nil {
+			return err
+		}
 		defer func() {
 			err := pool.Close()
 			if err != nil {
 				log.Fatal(err)
 			}
 		}()
-		if err != nil {
-			return err
-		}
 		return action(context{settings, ctx, pool})
 	}
 }

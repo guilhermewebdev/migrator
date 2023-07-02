@@ -31,16 +31,25 @@ var test_envs = []env_set{
 		"DB_DSN":    "/usr/src/migrator/tmp/test.sqlite3",
 		"DB_DRIVER": "sqlite3",
 	},
+	{
+		"DB_DSN":    "/usr/src/migrator/tmp/test.sqlite",
+		"DB_DRIVER": "sqlite",
+	},
+}
+
+func new_sqlite(file_path string) {
+	file, err := os.OpenFile(file_path, os.O_CREATE|os.O_RDWR, 0600)
+	if err != nil {
+		log.Fatal(err)
+	}
+	file.Close()
 }
 
 func env(test func(env_set)) {
 	table_name := "table_" + strings.Replace(uuid.NewString(), "-", "_", 4)
 	os.Setenv("MIGRATIONS_TABLE", table_name)
-	file, err := os.OpenFile("/usr/src/migrator/tmp/test.sqlite3", os.O_CREATE|os.O_RDWR, 0600)
-	if err != nil {
-		log.Fatal(err)
-	}
-	file.Close()
+	new_sqlite("/usr/src/migrator/tmp/test.sqlite")
+	new_sqlite("/usr/src/migrator/tmp/test.sqlite3")
 	count := 1
 	for _, envs := range test_envs {
 		set_env(envs)
@@ -83,6 +92,17 @@ func TestDown(t *testing.T) {
 			t.Fatal(err)
 		}
 		if err := cli.Run([]string{"migrator", "down"}); err != nil {
+			t.Fatal(err)
+		}
+	})
+}
+
+func TestDown_WithoutMigrations(t *testing.T) {
+	os.Setenv("MIGRATIONS_DIR", "/usr/src/migrator/e2e/mocks/1")
+	env(func(envs env_set) {
+		t.Log("\nTesting with envs: ", envs, "\n")
+		err := cli.Run([]string{"migrator", "down"})
+		if err == nil || err.Error() != "No migrations to rollback" {
 			t.Fatal(err)
 		}
 	})

@@ -1,6 +1,7 @@
 package migration
 
 import (
+	"fmt"
 	"regexp"
 	"testing"
 )
@@ -266,5 +267,26 @@ func TestService_Down(t *testing.T) {
 	}
 	if migration != expected_migration {
 		t.Fatal(migration, " is not ", expected_migration)
+	}
+}
+
+func TestService_Down_WithoutReferences(t *testing.T) {
+	migrations := &migrationsRepositoryMock{
+		migrationMock: Migration{Name: "2_testing", Path: "testing"},
+	}
+	references := &referenceRepositoryMock{
+		referenceMockError: fmt.Errorf("No migrations to rollback"),
+	}
+	var service Service = &ServiceImpl{
+		Migrations: migrations,
+		References: references,
+	}
+	migration, err := service.Down()
+	if err == nil || err.Error() != "No migrations to rollback" {
+		t.Fatal(err)
+	}
+	empty := Migration{}
+	if migration != empty {
+		t.Fatal(migration, " is not ", empty)
 	}
 }

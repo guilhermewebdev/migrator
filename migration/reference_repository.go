@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"database/sql"
 	_ "embed"
+	"fmt"
 	"strings"
 	"text/template"
 	"time"
@@ -244,5 +245,8 @@ func (r *ReferenceRepositoryImpl) GetLast() (Reference, error) {
 		return Reference{}, err
 	}
 	reference, err := r.scan_ref(row)
+	if err != nil && err.Error() == "sql: no rows in result set" {
+		return Reference{}, fmt.Errorf("No migrations to rollback")
+	}
 	return reference, err
 }

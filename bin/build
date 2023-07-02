@@ -1,3 +1,5 @@
 #!/bin/bash
 
-go build -o $SRC_DIR/bin -gcflags="all=-N -l" $SRC_DIR
+clear
+go build -v -o $SRC_DIR/bin/migrate $@ $SRC_DIR
+du -h $SRC_DIR/bin/migrate
