@@ -6,4 +6,6 @@ mkdir -p $REPORTS
 go test -benchmem \
     -coverprofile $REPORTS/cover.out \
     -skip e2e \
-    -v ./migration $@
+    -v ./migration/tests \
+    -v ./lib/tests \
+    $@

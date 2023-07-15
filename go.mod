@@ -9,7 +9,7 @@ require (
 	github.com/lib/pq v1.10.9
 	github.com/sijms/go-ora v1.3.2
 	github.com/urfave/cli/v2 v2.25.7
-	golang.org/x/exp v0.0.0-20230626212559-97b1e661b5df
+	golang.org/x/exp v0.0.0-20230713183714-613f0c0eb8a1
 	gopkg.in/yaml.v2 v2.4.0
 )
 
@@ -33,6 +33,7 @@ require (
 )
 
 require (
+	github.com/DATA-DOG/go-sqlmock v1.5.0
 	github.com/cpuguy83/go-md2man/v2 v2.0.2 // indirect
 	github.com/golang-sql/civil v0.0.0-20190719163853-cb61b32ac6fe // indirect
 	github.com/golang-sql/sqlexp v0.1.0 // indirect

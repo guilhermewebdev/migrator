@@ -1,4 +1,4 @@
-package migration
+package migration_test
 
 import (
 	"log"
@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/guilhermewebdev/migrator/conf"
+	"github.com/guilhermewebdev/migrator/migration"
 )
 
 type diskMock struct {
@@ -38,14 +39,16 @@ func (repo *diskMock) Read(file_path string) (string, error) {
 
 func get_settings() conf.Settings {
 	settings := conf.Settings{
-		MigrationsDir: "./migrations",
+		MigrationsDir:       "./migrations",
+		MigrationsTableName: "migrations",
 	}
 	return settings
 }
 
 func TestMigrationRepository_Create(t *testing.T) {
+	t.Parallel()
 	disk := diskMock{}
-	var repo MigrationRepository = &MigrationRepositoryImpl{
+	var repo migration.MigrationRepository = &migration.MigrationRepositoryImpl{
 		Disk:     &disk,
 		Settings: get_settings(),
 	}
@@ -61,13 +64,14 @@ func TestMigrationRepository_Create(t *testing.T) {
 }
 
 func TestMigrationRepository_List(t *testing.T) {
+	t.Parallel()
 	disk := diskMock{
 		listMock: []string{
 			"test",
 		},
 		readMock: "SELECT * FROM table;",
 	}
-	var repo MigrationRepository = &MigrationRepositoryImpl{
+	var repo migration.MigrationRepository = &migration.MigrationRepositoryImpl{
 		Disk:     &disk,
 		Settings: get_settings(),
 	}

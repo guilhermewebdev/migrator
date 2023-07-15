@@ -5,5 +5,4 @@ REPORTS=$SRC_DIR/tmp/reports/unit
 mkdir -p $REPORTS
 go test -benchmem \
     -coverprofile $REPORTS/cover.out \
-    -skip e2e \
     -v ./... $@
