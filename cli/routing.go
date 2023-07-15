@@ -63,10 +63,13 @@ func call(action func(context) error) lib_cli.ActionFunc {
 
 func BuildRouter() *lib_cli.App {
 	app := &lib_cli.App{
-		Name:                 "migrate",
+		Name:                 "Migrator",
+		Usage:                "Manage your databases with migrations",
 		Version:              "0.0.0",
 		Compiled:             time.Now().UTC(),
 		EnableBashCompletion: true,
+		HelpName:             "migrate",
+		DefaultCommand:       "help",
 		Flags: []lib_cli.Flag{
 			&lib_cli.StringFlag{
 				Name:    "conf-file",

@@ -99,7 +99,7 @@ func (r *ReferenceRepositoryImpl) exec(query string, values ...P) (sql.Result, e
 	return r.DB.Exec(formatted)
 }
 
-func (r *ReferenceRepositoryImpl) query(query string, values ...P) (*sql.Rows, error) {
+func (r *ReferenceRepositoryImpl) query(query string, values ...P) (lib.DB_Rows, error) {
 	formatted, err := r.format(query, values...)
 	if err != nil {
 		return &sql.Rows{}, err
@@ -107,7 +107,7 @@ func (r *ReferenceRepositoryImpl) query(query string, values ...P) (*sql.Rows, e
 	return r.DB.Query(formatted)
 }
 
-func (r *ReferenceRepositoryImpl) query_row(query string, values ...P) (*sql.Row, error) {
+func (r *ReferenceRepositoryImpl) query_row(query string, values ...P) (lib.DB_Row, error) {
 	formatted, err := r.format(query, values...)
 	if err != nil {
 		return &sql.Row{}, err

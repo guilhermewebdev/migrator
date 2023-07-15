@@ -17,6 +17,21 @@ type ConnectionParams struct {
 	Driver string
 }
 
+type DB_Row interface {
+	Err() error
+	Scan(dest ...any) error
+}
+
+type DB_Rows interface {
+	Close() error
+	ColumnTypes() ([]*sql.ColumnType, error)
+	Columns() ([]string, error)
+	Err() error
+	Next() bool
+	NextResultSet() bool
+	Scan(dest ...any) error
+}
+
 type DB interface {
 	Query(query string, args ...any) (*sql.Rows, error)
 	Exec(query string, args ...any) (sql.Result, error)
