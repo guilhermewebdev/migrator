@@ -4,10 +4,10 @@ import (
 	"testing"
 
 	"github.com/DATA-DOG/go-sqlmock"
-	"github.com/guilhermewebdev/migrator/migration"
+	mod "github.com/guilhermewebdev/migrator/migration"
 )
 
-func TestList(t *testing.T) {
+func TestReferenceRepository_List(t *testing.T) {
 	t.Parallel()
 	db, mock, err := sqlmock.New()
 	if err != nil {
@@ -19,7 +19,7 @@ func TestList(t *testing.T) {
 	}).AddRow(2, "migration_test", "2006-01-02 15:04:05")
 	mock.ExpectQuery("^SELECT \\* FROM migrations").
 		WillReturnRows(mocked_rows)
-	repo := migration.ReferenceRepositoryImpl{
+	repo := mod.ReferenceRepositoryImpl{
 		Settings: get_settings(),
 		DB:       db,
 	}
@@ -32,5 +32,29 @@ func TestList(t *testing.T) {
 	}
 	if err := mock.ExpectationsWereMet(); err != nil {
 		t.Errorf("there were unfulfilled expectations: %s", err)
+	}
+}
+
+func TestReferenceRepository_Up(t *testing.T) {
+	t.Parallel()
+	db, mock, err := sqlmock.New()
+	if err != nil {
+		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
+	}
+	defer db.Close()
+	mock.ExpectExec("^CREATE").WillReturnResult(sqlmock.NewResult(1, 0))
+	mock.ExpectQuery("^SELECT MAX").
+		WillReturnRows(sqlmock.NewRows([]string{"next_id"}).AddRow(2))
+	mock.ExpectExec("^INSERT").WillReturnResult(sqlmock.NewResult(1, 1))
+	migration := mod.Migration{
+		UpQuery: "CREATE TABLE test;",
+	}
+	repo := mod.ReferenceRepositoryImpl{
+		Settings: get_settings(),
+		DB:       db,
+	}
+	err = repo.Up(migration)
+	if err != nil {
+		t.Fatal(err)
 	}
 }
