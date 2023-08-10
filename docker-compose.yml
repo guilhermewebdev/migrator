@@ -2,6 +2,7 @@ version: '3'
 services:
   migrator:
     image: golang
+    platform: linux/amd64
     volumes:
       - .:/usr/src/migrator
       - ./entrypoint.sh:/usr/src/migrator/entrypoint.sh
