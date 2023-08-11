@@ -14,6 +14,7 @@ type Service interface {
 	Up() (Migration, error)
 	Unlock() error
 	Down() (Migration, error)
+	Latest() ([]Migration, error)
 }
 
 type ServiceImpl struct {
@@ -100,6 +101,20 @@ func (s *ServiceImpl) getNextMigration() (Migration, error) {
 	return Migration{}, nil
 }
 
+func (s *ServiceImpl) listMissingMigrations() ([]Migration, error) {
+	relations, err := s.relateMigrationWithReference()
+	if err != nil {
+		return []Migration{}, err
+	}
+	migrations := []Migration{}
+	for _, relation := range relations {
+		if relation.Reference.Name == "" && relation.Reference.ID == "" {
+			migrations = append(migrations, relation.Migration)
+		}
+	}
+	return migrations, nil
+}
+
 func (s *ServiceImpl) Create(name string) error {
 	snake_case_name := lib.SnakeCase(name)
 	now := time.Now().UnixMilli()
@@ -144,4 +159,21 @@ func (s *ServiceImpl) Down() (Migration, error) {
 	}
 	err = s.References.Down(migration)
 	return migration, err
+}
+
+func (s *ServiceImpl) Latest() ([]Migration, error) {
+	defer s.semaphore()()
+	performed_migrations := []Migration{}
+	missing_migrations, err := s.listMissingMigrations()
+	if err != nil {
+		return performed_migrations, err
+	}
+	for _, migration := range missing_migrations {
+		err = s.References.Up(migration)
+		if err != nil {
+			return performed_migrations, err
+		}
+		performed_migrations = append(performed_migrations, migration)
+	}
+	return performed_migrations, nil
 }

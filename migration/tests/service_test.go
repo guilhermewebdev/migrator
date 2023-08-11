@@ -305,7 +305,10 @@ func TestService_Down_WithoutReferences(t *testing.T) {
 func TestService_Latest(t *testing.T) {
 	t.Parallel()
 	migrations := &migrationsRepositoryMock{
-		migrationMock: mod.Migration{Name: "2_testing", Path: "testing"},
+		listMock: []mod.Migration{
+			{Name: "1_testing", Path: "testing_1"},
+			{Name: "2_testing", Path: "testing_2"},
+		},
 	}
 	references := &referenceRepositoryMock{
 		referenceMockError: fmt.Errorf("No migrations to rollback"),
@@ -314,12 +317,12 @@ func TestService_Latest(t *testing.T) {
 		Migrations: migrations,
 		References: references,
 	}
-	migrations, err := service.Latest()
+	performed_migrations, err := service.Latest()
 	if err != nil {
 		t.Fatal(err)
 	}
-	if len(migrations) != 1 {
-		t.Fatal("The migrations should have length 1 ", migrations)
+	if len(performed_migrations) != 2 {
+		t.Fatal("The migrations should have length 1 ", performed_migrations)
 	}
 }
 
@@ -333,11 +336,11 @@ func TestService_WhenMigrationsAlreadyWereRan(t *testing.T) {
 		Migrations: migrations,
 		References: references,
 	}
-	migrations, err := service.Latest()
+	performed_migrations, err := service.Latest()
 	if err != nil {
 		t.Fatal(err)
 	}
-	if len(migrations) != 0 {
-		t.Fatal("The migrations should have length 1 ", migrations)
+	if len(performed_migrations) != 0 {
+		t.Fatal("The migrations should have length 1 ", performed_migrations)
 	}
 }
