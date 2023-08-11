@@ -301,3 +301,43 @@ func TestService_Down_WithoutReferences(t *testing.T) {
 		t.Fatal(migration, " is not ", empty)
 	}
 }
+
+func TestService_Latest(t *testing.T) {
+	t.Parallel()
+	migrations := &migrationsRepositoryMock{
+		migrationMock: mod.Migration{Name: "2_testing", Path: "testing"},
+	}
+	references := &referenceRepositoryMock{
+		referenceMockError: fmt.Errorf("No migrations to rollback"),
+	}
+	var service mod.Service = &mod.ServiceImpl{
+		Migrations: migrations,
+		References: references,
+	}
+	migrations, err := service.Latest()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(migrations) != 1 {
+		t.Fatal("The migrations should have length 1 ", migrations)
+	}
+}
+
+func TestService_WhenMigrationsAlreadyWereRan(t *testing.T) {
+	t.Parallel()
+	migrations := &migrationsRepositoryMock{}
+	references := &referenceRepositoryMock{
+		referenceMockError: fmt.Errorf("No migrations to rollback"),
+	}
+	var service mod.Service = &mod.ServiceImpl{
+		Migrations: migrations,
+		References: references,
+	}
+	migrations, err := service.Latest()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(migrations) != 0 {
+		t.Fatal("The migrations should have length 1 ", migrations)
+	}
+}
