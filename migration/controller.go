@@ -7,6 +7,7 @@ type Controller interface {
 	Up() (string, error)
 	Unlock() (string, error)
 	Down() (string, error)
+	Latest() (string, error)
 }
 
 type ControllerImpl struct {
@@ -55,4 +56,18 @@ func (c *ControllerImpl) Down() (string, error) {
 		return "No migrations to apply", nil
 	}
 	return "The migration \"" + migration.Name + "\" was rolled back.", nil
+}
+
+func (c *ControllerImpl) Latest() (string, error) {
+	migrations, err := c.Service.Latest()
+	message := fmt.Sprintf("[PERFORMED %d MIGRATIONS]:\n", len(migrations))
+	for _, migration := range migrations {
+		message = message + migration.Name + "\n"
+	}
+	message = message + "=======" + "\n"
+	if err != nil {
+		message = message + err.Error()
+		return message, fmt.Errorf(message)
+	}
+	return message, nil
 }

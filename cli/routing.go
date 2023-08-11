@@ -140,6 +140,13 @@ func BuildRouter() *lib_cli.App {
 					return unlock(ctx.pool, ctx.s)
 				}),
 			},
+			{
+				Name:  "latest",
+				Usage: "Perform missing migrations",
+				Action: call(func(ctx context) error {
+					return latest(ctx.pool, ctx.s)
+				}),
+			},
 		},
 	}
 	return app

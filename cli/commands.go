@@ -47,3 +47,13 @@ func down(pool lib.DB, settings conf.Settings) error {
 	log.Println(response)
 	return nil
 }
+
+func latest(pool lib.DB, settings conf.Settings) error {
+	module, err := migration.NewMigrationModule(settings, pool)
+	response, err := module.Controller().Latest()
+	if err != nil {
+		return err
+	}
+	log.Println(response)
+	return nil
+}
