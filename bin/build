@@ -1,5 +1,4 @@
 #!/bin/bash
 
-clear
 go build -v -o $SRC_DIR/bin/migrate $@ $SRC_DIR
 du -h $SRC_DIR/bin/migrate
