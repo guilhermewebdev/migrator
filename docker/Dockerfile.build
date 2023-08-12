@@ -1,0 +1,5 @@
+FROM golang
+WORKDIR /migrator
+COPY . .
+ENV SRC_DIR /migrator
+RUN ./bin/build

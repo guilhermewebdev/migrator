@@ -14,3 +14,9 @@ install:
 	sudo cp ./bin/migrate /usr/local/bin/
 uninstall:
 	sudo rm /usr/local/bin/migrate
+images:
+	docker build -t migrator:build -f docker/Dockerfile.build .
+	docker build -t migrator:alpine -f docker/Dockerfile.alpine .
+	docker build -t migrator:bullseye -t migrator:latest -f docker/Dockerfile.bullseye .
+	docker build -t migrator:scratch -f docker/Dockerfile.scratch .
+	docker build -t migrator:bookworm -f docker/Dockerfile.bookworm .

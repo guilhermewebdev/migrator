@@ -1,0 +1,3 @@
+FROM migrator:build as build
+FROM debian:bullseye
+COPY --from=build /migrator/bin/migrate /bin/migrate
