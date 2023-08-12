@@ -8,5 +8,7 @@ mkdir -p $REPORTS
 ROOT_DIR=$ROOT_DIR go test -benchmem \
     -coverprofile $REPORTS/cover.out \
     -skip $ROOT_DIR/docs \
-    -v ./src/... ./e2e/... \
+    -v \
+    $SRC_DIR/... \
+    $ROOT_DIR/e2e/... \
     $@

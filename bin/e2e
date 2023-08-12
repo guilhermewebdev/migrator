@@ -8,4 +8,6 @@ mkdir -p $REPORTS
 ROOT_DIR=$ROOT_DIR go test -benchmem \
     -trace $REPORTS/trace.out \
     -skip $ROOT_DIR/docs \
-    -v ./e2e $@
+    -v \
+    $ROOT_DIR/e2e \
+    $@
