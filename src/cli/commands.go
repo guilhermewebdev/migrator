@@ -3,9 +3,9 @@ package cli
 import (
 	"log"
 
-	"github.com/guilhermewebdev/migrator/conf"
-	"github.com/guilhermewebdev/migrator/lib"
-	"github.com/guilhermewebdev/migrator/migration"
+	"github.com/guilhermewebdev/migrator/src/conf"
+	"github.com/guilhermewebdev/migrator/src/lib"
+	"github.com/guilhermewebdev/migrator/src/migration"
 )
 
 func create_migration(pool lib.DB, settings conf.Settings, migration_name string) error {

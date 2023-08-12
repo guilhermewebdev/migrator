@@ -4,8 +4,8 @@ import (
 	"log"
 	"time"
 
-	"github.com/guilhermewebdev/migrator/conf"
-	"github.com/guilhermewebdev/migrator/lib"
+	"github.com/guilhermewebdev/migrator/src/conf"
+	"github.com/guilhermewebdev/migrator/src/lib"
 	lib_cli "github.com/urfave/cli/v2"
 )
 

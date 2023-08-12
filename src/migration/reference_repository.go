@@ -9,8 +9,8 @@ import (
 	"text/template"
 	"time"
 
-	"github.com/guilhermewebdev/migrator/conf"
-	"github.com/guilhermewebdev/migrator/lib"
+	"github.com/guilhermewebdev/migrator/src/conf"
+	"github.com/guilhermewebdev/migrator/src/lib"
 	"golang.org/x/exp/maps"
 )
 

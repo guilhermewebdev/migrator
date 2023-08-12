@@ -4,7 +4,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/guilhermewebdev/migrator/cli"
+	"github.com/guilhermewebdev/migrator/src/cli"
 )
 
 func main() {

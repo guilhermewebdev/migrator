@@ -6,8 +6,8 @@ import (
 	"regexp"
 	"testing"
 
-	"github.com/guilhermewebdev/migrator/conf"
-	"github.com/guilhermewebdev/migrator/migration"
+	"github.com/guilhermewebdev/migrator/src/conf"
+	"github.com/guilhermewebdev/migrator/src/migration"
 )
 
 type diskMock struct {

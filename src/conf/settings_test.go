@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/guilhermewebdev/migrator/lib"
+	"github.com/guilhermewebdev/migrator/src/lib"
 )
 
 func mock_file(path_name string, file_name string) func() {

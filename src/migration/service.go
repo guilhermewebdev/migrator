@@ -6,7 +6,7 @@ import (
 	"sort"
 	"time"
 
-	"github.com/guilhermewebdev/migrator/lib"
+	"github.com/guilhermewebdev/migrator/src/lib"
 )
 
 type Service interface {

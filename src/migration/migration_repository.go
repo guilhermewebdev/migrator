@@ -3,8 +3,8 @@ package migration
 import (
 	"path"
 
-	"github.com/guilhermewebdev/migrator/conf"
-	"github.com/guilhermewebdev/migrator/lib"
+	"github.com/guilhermewebdev/migrator/src/conf"
+	"github.com/guilhermewebdev/migrator/src/lib"
 )
 
 type MigrationRepository interface {

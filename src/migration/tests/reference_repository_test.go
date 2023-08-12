@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/DATA-DOG/go-sqlmock"
-	mod "github.com/guilhermewebdev/migrator/migration"
+	mod "github.com/guilhermewebdev/migrator/src/migration"
 )
 
 func TestReferenceRepository_List(t *testing.T) {

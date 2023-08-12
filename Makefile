@@ -1,15 +1,15 @@
 build:
-	SRC_DIR="." ./bin/build
+	./bin/build
 run:
-	SRC_DIR="." ./bin/dev
+	./bin/dev
 clean:
-	SRC_DIR="." ./bin/clean
+	./bin/clean
 unit:
-	SRC_DIR="." ./bin/unit
+	./bin/unit
 e2e:
-	SRC_DIR="." ./bin/e2e
+	./bin/e2e
 fulltest:
-	SRC_DIR="." ./bin/fulltest
+	./bin/fulltest
 install:
 	sudo cp ./bin/migrate /usr/local/bin/
 uninstall:

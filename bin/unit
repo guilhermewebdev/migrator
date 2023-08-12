@@ -1,11 +1,13 @@
 #!/bin/bash
 
 clear
-REPORTS=$SRC_DIR/tmp/reports/unit
+ROOT_DIR=$(realpath "$(dirname $0)/..")
+source $ROOT_DIR/bin/.env
+REPORTS=$ROOT_DIR/tmp/reports/unit
 mkdir -p $REPORTS
-go test -benchmem \
+ROOT_DIR=$ROOT_DIR go test -benchmem \
     -coverprofile $REPORTS/cover.out \
-    -skip e2e \
-    -v ./migration/tests \
-    -v ./lib/tests \
+    -skip $ROOT_DIR/e2e \
+    -skip $ROOT_DIR/docs \
+    $SRC_DIR/... \
     $@

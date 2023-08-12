@@ -3,7 +3,7 @@ package lib_test
 import (
 	"testing"
 
-	"github.com/guilhermewebdev/migrator/lib"
+	"github.com/guilhermewebdev/migrator/src/lib"
 )
 
 func TestSnakeCase(t *testing.T) {

@@ -7,7 +7,7 @@ import (
 	"testing"
 
 	"github.com/google/uuid"
-	"github.com/guilhermewebdev/migrator/cli"
+	"github.com/guilhermewebdev/migrator/src/cli"
 )
 
 type env_set map[string]string
@@ -28,11 +28,11 @@ var test_envs = []env_set{
 		"DB_DRIVER": "postgres",
 	},
 	{
-		"DB_DSN":    "/usr/src/migrator/tmp/test.sqlite3",
+		"DB_DSN":    os.Getenv("ROOT_DIR") + "/tmp/test.sqlite3",
 		"DB_DRIVER": "sqlite3",
 	},
 	{
-		"DB_DSN":    "/usr/src/migrator/tmp/test.sqlite",
+		"DB_DSN":    os.Getenv("ROOT_DIR") + "/tmp/test.sqlite",
 		"DB_DRIVER": "sqlite",
 	},
 }
@@ -48,8 +48,8 @@ func new_sqlite(file_path string) {
 func env(test func(env_set)) {
 	table_name := "table_" + strings.Replace(uuid.NewString(), "-", "_", 4)
 	os.Setenv("MIGRATIONS_TABLE", table_name)
-	new_sqlite("/usr/src/migrator/tmp/test.sqlite")
-	new_sqlite("/usr/src/migrator/tmp/test.sqlite3")
+	new_sqlite(os.Getenv("ROOT_DIR") + "/tmp/test.sqlite")
+	new_sqlite(os.Getenv("ROOT_DIR") + "/tmp/test.sqlite3")
 	count := 1
 	for _, envs := range test_envs {
 		set_env(envs)
@@ -59,7 +59,7 @@ func env(test func(env_set)) {
 }
 
 func TestUp(t *testing.T) {
-	os.Setenv("MIGRATIONS_DIR", "/usr/src/migrator/e2e/mocks/1")
+	os.Setenv("MIGRATIONS_DIR", os.Getenv("ROOT_DIR")+"/e2e/mocks/1")
 	env(func(envs env_set) {
 		t.Log("Testing with envs: ", envs)
 		if err := cli.Run([]string{"migrator", "up"}); err != nil {
@@ -69,7 +69,7 @@ func TestUp(t *testing.T) {
 }
 
 func TestNew(t *testing.T) {
-	os.Setenv("MIGRATIONS_DIR", "/usr/src/migrator/tmp/migrations")
+	os.Setenv("MIGRATIONS_DIR", os.Getenv("ROOT_DIR")+"/tmp/migrations")
 	if err := cli.Run([]string{"migrator", "new", "migration_test"}); err != nil {
 		t.Fatal(err)
 	}
@@ -85,7 +85,7 @@ func TestUnlock(t *testing.T) {
 }
 
 func TestDown(t *testing.T) {
-	os.Setenv("MIGRATIONS_DIR", "/usr/src/migrator/e2e/mocks/1")
+	os.Setenv("MIGRATIONS_DIR", os.Getenv("ROOT_DIR")+"/e2e/mocks/1")
 	env(func(envs env_set) {
 		t.Log("\nTesting with envs: ", envs, "\n")
 		if err := cli.Run([]string{"migrator", "up"}); err != nil {
@@ -98,7 +98,7 @@ func TestDown(t *testing.T) {
 }
 
 func TestDown_WithoutMigrations(t *testing.T) {
-	os.Setenv("MIGRATIONS_DIR", "/usr/src/migrator/e2e/mocks/1")
+	os.Setenv("MIGRATIONS_DIR", os.Getenv("ROOT_DIR")+"/e2e/mocks/1")
 	env(func(envs env_set) {
 		t.Log("\nTesting with envs: ", envs, "\n")
 		err := cli.Run([]string{"migrator", "down"})
@@ -109,7 +109,7 @@ func TestDown_WithoutMigrations(t *testing.T) {
 }
 
 func TestLatest(t *testing.T) {
-	os.Setenv("MIGRATIONS_DIR", "/usr/src/migrator/e2e/mocks/1")
+	os.Setenv("MIGRATIONS_DIR", os.Getenv("ROOT_DIR")+"/e2e/mocks/1")
 	env(func(envs env_set) {
 		t.Log("\nTesting with envs: ", envs, "\n")
 		if err := cli.Run([]string{"migrator", "latest"}); err != nil {
@@ -119,7 +119,7 @@ func TestLatest(t *testing.T) {
 }
 
 func TestLatest_WhenMigrationsWereRan(t *testing.T) {
-	os.Setenv("MIGRATIONS_DIR", "/usr/src/migrator/e2e/mocks/1")
+	os.Setenv("MIGRATIONS_DIR", os.Getenv("ROOT_DIR")+"/e2e/mocks/1")
 	env(func(envs env_set) {
 		t.Log("\nTesting with envs: ", envs, "\n")
 		for i := 1; i <= 3; i++ {

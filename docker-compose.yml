@@ -2,15 +2,12 @@ version: '3'
 services:
   migrator:
     image: golang
-    platform: linux/amd64
     volumes:
       - .:/usr/src/migrator
       - ./entrypoint.sh:/usr/src/migrator/entrypoint.sh
       - go_pkg:/go/pkg
     working_dir: /usr/src/migrator
     entrypoint: ./entrypoint.sh
-    environment:
-      SRC_DIR: /usr/src/migrator
   mysql:
     image: mysql
     volumes:

@@ -5,7 +5,7 @@ import (
 	"regexp"
 	"testing"
 
-	mod "github.com/guilhermewebdev/migrator/migration"
+	mod "github.com/guilhermewebdev/migrator/src/migration"
 )
 
 type referenceRepositoryMock struct {
