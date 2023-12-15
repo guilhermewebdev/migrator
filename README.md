@@ -84,7 +84,35 @@ migrate latest
 
 By default, Migrate looks for a configuration file named "migrator.yml" for global settings. You can specify an alternative configuration file using the `--conf-file` option.
 
-Feel free to customize the configuration file to match your project's requirements.
+The `migrator.yml` file is used to configure settings for the Migrator command-line tool. Below is an example of the configuration file syntax along with explanations of each parameter:
+
+```yaml
+# Example migrator.yml Configuration File
+
+# Directory where migration files are stored
+migrations_dir: ./migrations
+
+# Name of the table to track migrations in the database
+migrations_table_name: migrations
+
+# Database connection string (DSN)
+db_dsn: "postgres://user:pass@postgres:5432/test?sslmode=disable"
+
+# Database driver (Supported drivers: mysql, postgres, sqlserver, sqlite, sqlite3, oracle)
+db_driver: postgres
+```
+
+**Explanation:**
+
+1. `migrations_dir`: Specifies the directory where migration files are located. In the example, migrations are expected to be in the `./migrations` directory. You can customize this path according to your project structure.
+
+2. `migrations_table_name`: Defines the name of the table used to track migrations in the database. The default is set to "migrations," but you can modify it based on your preferences.
+
+3. `db_dsn`: Represents the Database Source Name (DSN), which contains information about the database connection. In the example, a PostgreSQL database connection string is provided. Update this with the appropriate credentials and connection details for your database.
+
+4. `db_driver`: Specifies the database driver to be used (e.g., mysql, postgres, sqlserver, sqlite, sqlite3, oracle). In the example, the driver is set to "postgres." Choose the appropriate driver based on your database system.
+
+Ensure that the information in the `migrator.yml` file accurately reflects your database setup. You can customize these parameters to suit your project's requirements. If needed, refer to the [Global Options](#global-options) section in the README for additional options that can be specified when running Migrate commands.
 
 ---
 
