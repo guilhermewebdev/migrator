@@ -12,6 +12,48 @@ Current version: 0.1
 
 Guilherme Isaías <guilherme@guilhermeweb.dev>
 
+## Installation
+
+### Building from source code
+
+#### Prerequisites
+
+Make sure your system meets the following requirements:
+
+Go: Ensure that Go is installed on your machine. You can download and install it from [the official Go website](https://go.dev/doc/install).
+
+Docker (optional): If you plan to build and run the migrator tool in a Docker container, make sure Docker is installed on your system. You can find instructions for installing Docker [here](https://docs.docker.com/engine/install/).
+
+#### Building and Installing
+1. Clone the repository to your local machine:
+
+```bash
+git clone https://github.com/guilhermewebdev/migrator.git
+```
+
+Change into the project directory:
+
+```bash
+cd migrator
+```
+
+Run the build command using the provided 
+Makefile:
+
+```bash
+make build
+```
+
+This will compile the migrator tool.
+Install the migrator tool globally on your system:
+
+```bash
+make install
+```
+
+This will copy the compiled executable to /usr/local/bin/, making it accessible system-wide.
+
+
 ## Usage
 
 ```shell
