@@ -142,6 +142,24 @@ migrate unlock
 migrate latest
 ```
 
+## Environment Variable Configuration
+
+You can apply configurations to Migrator using environment variables. The following variables are supported:
+
+- `DB_DSN`: Database connection string.
+- `DB_DRIVER`: Database driver (mysql, postgres, sqlserver, sqlite, sqlite3, or oracle).
+- `MIGRATIONS_DIR`: Select the migrations directory (default: "./migrations").
+- `MIGRATIONS_TABLE`: Migrations table name (default: "migrations").
+
+To set these variables, you can use your shell's syntax. For example, in Bash:
+
+```bash
+export DB_DSN="your_database_connection_string"
+export DB_DRIVER="your_database_driver"
+export MIGRATIONS_DIR="your_migrations_directory"
+export MIGRATIONS_TABLE="your_migrations_table_name"
+```
+
 ## Configuration File
 
 By default, Migrate looks for a configuration file named "migrator.yml" for global settings. You can specify an alternative configuration file using the `--conf-file` option.
