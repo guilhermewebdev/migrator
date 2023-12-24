@@ -53,6 +53,26 @@ make install
 
 This will copy the compiled executable to /usr/local/bin/, making it accessible system-wide.
 
+## Docker
+
+You can also use a pre-built Docker image for Migrator available on Docker Hub. The image is hosted at [guilhermewebdev/migrator](https://hub.docker.com/r/guilhermewebdev/migrator). To run Migrator using Docker, use the following command:
+
+```bash
+docker run -it guilhermewebdev/migrator:latest migrate [global options] command [command options] [arguments...]
+```
+
+Replace `[global options]`, `command`, `[command options]`, and `[arguments...]` with the specific options and commands you want to execute.
+
+### Example using Docker
+
+```bash
+# Create a new migration using Docker
+docker run -it guilhermewebdev/migrator:latest migrate new -n migration_name
+```
+
+This will execute the specified Migrator command inside a Docker container based on the provided image.
+
+Note: Ensure that you have Docker installed on your machine. You can find instructions for installing Docker [here](https://docs.docker.com/engine/install/).
 
 ## Usage
 
