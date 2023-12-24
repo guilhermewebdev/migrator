@@ -41,11 +41,19 @@ jobs:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+    - name: Build base image build
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        file: ./docker/Dockerfile.build
+        push: false
+        tags: migrator:build
+
     - name: Extract metadata (tags, labels) for Docker
       id: meta
       uses: docker/metadata-action@v5
       with:
-        images: guilhermewebdev/migrator
+        images: ${{ secrets.DOCKERHUB_USERNAME }}/migrator
 
     - name: Build and push
       uses: docker/build-push-action@v5
@@ -68,7 +76,6 @@ jobs:
           - flavor: bullseye
           - flavor: bookworm
           - flavor: scratch
-          - flavor: build
           - flavor: debian
     permissions:
       contents: read
@@ -84,14 +91,22 @@ jobs:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+    - name: Build base image build
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        file: ./docker/Dockerfile.build
+        push: false
+        tags: migrator:build
+
     - name: Extract metadata (tags, labels) for Docker
       id: meta
       uses: docker/metadata-action@v5
       with:
-        images: guilhermewebdev/migrator
+        images: ${{ secrets.DOCKERHUB_USERNAME }}/migrator
         flavor: |
-          latest=false
-          prefix=${{ matrix.flavor }}
+          latest=auto
+          prefix=${{ matrix.flavor }}-,onlatest=true
 
     - name: Build and push
       uses: docker/build-push-action@v5
@@ -99,5 +114,7 @@ jobs:
         context: .
         file: ./docker/Dockerfile.${{ matrix.flavor }}
         push: ${{ github.event_name != 'pull_request' }}
-        tags: ${{ steps.meta.outputs.tags }}
+        tags: |
+          ${{ steps.meta.outputs.tags }}
+          ${{ secrets.DOCKERHUB_USERNAME }}/migrator:${{ matrix.flavor }}
         labels: ${{ steps.meta.outputs.labels }}
