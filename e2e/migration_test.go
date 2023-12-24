@@ -18,6 +18,11 @@ func set_env(envs env_set) {
 	}
 }
 
+func file_exists(filename string) bool {
+	_, err := os.Stat(filename)
+	return !os.IsNotExist(err)
+}
+
 var test_envs = []env_set{
 	{
 		"DB_DSN":    "user:pass@tcp(mysql:3306)/test",
@@ -131,4 +136,18 @@ func TestLatest_WhenMigrationsWereRan(t *testing.T) {
 			t.Fatal(err)
 		}
 	})
+}
+
+func TestInit(t *testing.T) {
+	if err := cli.Run([]string{
+		"migrator",
+		"--conf-file",
+		os.Getenv("ROOT_DIR") + "/tmp/migrator.yml",
+		"init",
+	}); err != nil {
+		t.Fatal(err)
+	}
+	if !file_exists(os.Getenv("ROOT_DIR") + "/tmp/migrator.yml") {
+		t.Fatal("The settings file was not created")
+	}
 }
