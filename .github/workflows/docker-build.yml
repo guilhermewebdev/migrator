@@ -1,0 +1,64 @@
+name: Docker Build and Publish
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    needs: tests
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - dockerfile: ./docker/Dockerfile
+            image: guilhermewebdev/migrator:latest
+          - dockerfile: ./docker/Dockerfile.slim
+            image: guilhermewebdev/migrator:slim
+          - dockerfile: ./docker/Dockerfile.alpine
+            image: guilhermewebdev/migrator:alpine
+          - dockerfile: ./docker/Dockerfile.bullseye
+            image: guilhermewebdev/migrator:bullseye
+          - dockerfile: ./docker/Dockerfile.bookworm
+            image: guilhermewebdev/migrator:bookworm
+          - dockerfile: ./docker/Dockerfile.scratch
+            image: guilhermewebdev/migrator:scratch
+          - dockerfile: ./docker/Dockerfile.build
+            image: guilhermewebdev/migrator:build
+          - dockerfile: ./docker/Dockerfile.debian
+            image: guilhermewebdev/migrator:debian
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Login to Docker Hub
+      uses: docker/login-action@v3
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+    - name: Set up Docker
+      uses: docker/setup-docker@v2
+      with:
+        dockerfile: ./docker/Dockerfile.build
+
+    - name: Extract metadata (tags, labels) for Docker
+      id: meta
+      uses: docker/metadata-action@5
+      with:
+        images: ${{ matrix.image }}
+
+    - name: Build and push
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        file: ${{ matrix.dockerfile }}
+        push: ${{ github.event_name != 'pull_request' }}
+        tags: ${{ steps.meta.outputs.tags }}
+        labels: ${{ steps.meta.outputs.labels }}

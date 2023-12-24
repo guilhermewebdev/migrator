@@ -1,0 +1,5 @@
+#!/bin/bash
+
+ROOT_DIR=$(realpath "$(dirname $0)/..")
+source $ROOT_DIR/bin/.env
+git clean -fX $ROOT_DIR/*

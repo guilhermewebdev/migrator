@@ -1,0 +1,15 @@
+#!/bin/bash
+
+clear
+ROOT_DIR=$(realpath "$(dirname $0)/..")
+source $ROOT_DIR/bin/.env
+REPORTS=$ROOT_DIR/tmp/reports/unit
+mkdir -p $REPORTS
+ROOT_DIR=$ROOT_DIR go test \
+    -benchmem \
+    -coverprofile $REPORTS/cover.out \
+    -skip $ROOT_DIR/e2e \
+    -skip $ROOT_DIR/docs \
+    -v \
+    $SRC_DIR/... \
+    $@

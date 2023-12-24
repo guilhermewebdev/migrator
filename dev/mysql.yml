@@ -1,0 +1,4 @@
+migrations_dir: ./migrations
+migrations_table_name: migrations
+db_dsn: "user:pass@tcp(mysql:3306)/test"
+db_driver: mysql

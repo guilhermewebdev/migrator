@@ -1,0 +1,5 @@
+#!/bin/bash
+
+ROOT_DIR=$(realpath "$(dirname $0)/..")
+source $ROOT_DIR/bin/.env
+ROOT_DIR=$ROOT_DIR go run -v $SRC_DIR $@
