@@ -28,6 +28,7 @@ jobs:
         docker build -t migrator:bookworm -f docker/Dockerfile.bookworm .
         docker build -t migrator:debian -f docker/Dockerfile.debian .
         docker build -t migrator:slim -f docker/Dockerfile.slim .
+        docker build -t migrator:latest -f docker/Dockerfile .
 
     - name: Push Docker Images
       run: |
@@ -40,6 +41,7 @@ jobs:
         docker push migrator:bookworm
         docker push migrator:debian
         docker push migrator:slim
+        docker push migrator:latest
 
   publish:
     runs-on: ubuntu-latest
@@ -63,6 +65,7 @@ jobs:
         docker tag migrator:bookworm ${{ secrets.DOCKER_USERNAME }}/migrator:bookworm-$version
         docker tag migrator:debian ${{ secrets.DOCKER_USERNAME }}/migrator:debian-$version
         docker tag migrator:slim ${{ secrets.DOCKER_USERNAME }}/migrator:slim-$version
+        docker tag migrator:latest ${{ secrets.DOCKER_USERNAME }}/migrator:$version
         echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
         docker push ${{ secrets.DOCKER_USERNAME }}/migrator:$version
         docker push ${{ secrets.DOCKER_USERNAME }}/migrator:alpine-$version
@@ -72,3 +75,4 @@ jobs:
         docker push ${{ secrets.DOCKER_USERNAME }}/migrator:bookworm-$version
         docker push ${{ secrets.DOCKER_USERNAME }}/migrator:debian-$version
         docker push ${{ secrets.DOCKER_USERNAME }}/migrator:slim-$version
+        docker push ${{ secrets.DOCKER_USERNAME }}/migrator:$version

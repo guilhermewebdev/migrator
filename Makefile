@@ -22,3 +22,4 @@ images:
 	docker build -t migrator:bookworm -f docker/Dockerfile.bookworm .
 	docker build -t migrator:debian -f docker/Dockerfile.debian .
 	docker build -t migrator:slim -f docker/Dockerfile.slim .
+	docker build -t migrator:latest -f docker/Dockerfile .
