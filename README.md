@@ -67,7 +67,7 @@ Replace `[global options]`, `command`, `[command options]`, and `[arguments...]`
 
 ```bash
 # Create a new migration using Docker
-docker run -it guilhermewebdev/migrator:latest migrate new -n migration_name
+docker run -it guilhermewebdev/migrator:latest migrate new migration_name
 ```
 
 This will execute the specified Migrator command inside a Docker container based on the provided image.
@@ -127,7 +127,7 @@ migrate [global options] command [command options] [arguments...]
 
 ```shell
 # Create a new migration
-migrate new -n migration_name
+migrate new <migration_name>
 
 # Execute the next migration
 migrate up
