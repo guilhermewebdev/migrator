@@ -3,3 +3,4 @@ migrations/
 migrate
 conf-temp.yml
 tmp/
+.cache/

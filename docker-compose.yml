@@ -9,6 +9,8 @@ services:
       - go_pkg:/go/pkg
     working_dir: /usr/src/migrator
     entrypoint: ./entrypoint.sh
+    environment:
+      GOCACHE: /usr/src/migrator/.cache/go-build
   mysql:
     image: mysql
     volumes:
