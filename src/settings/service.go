@@ -1,3 +1,7 @@
 package settings
 
-type SettingsService interface{}
+type SettingsService interface {
+	Get(settings_file_name string) Settings
+}
+
+type SettingsServiceImpl struct{}
