@@ -1,3 +1,6 @@
 FROM migrator:build as build
 FROM alpine
 COPY --from=build /migrator/bin/migrate /bin/migrate
+RUN addgroup -S -g 1000 migrator && \
+    adduser -SH -s /bin/sh -u 1000 -D migrator
+USER migrator
