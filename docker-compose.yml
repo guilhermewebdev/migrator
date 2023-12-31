@@ -2,6 +2,7 @@ version: '3'
 services:
   migrator:
     image: golang
+    user: 1000:1000
     volumes:
       - .:/usr/src/migrator
       - ./entrypoint.sh:/usr/src/migrator/entrypoint.sh
