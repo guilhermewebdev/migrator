@@ -4,3 +4,4 @@ migrate
 conf-temp.yml
 tmp/
 .cache/
+.compose.override.yml
