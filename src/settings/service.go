@@ -17,15 +17,35 @@ func (s *SettingsServiceImpl) getDefaultSettings() Settings {
 	}
 }
 
+func (s *SettingsServiceImpl) combineSettings(stgs ...Settings) Settings {
+	var final_settings Settings
+	for _, current := range stgs {
+		if current.MigrationsDir != "" {
+			final_settings.MigrationsDir = current.MigrationsDir
+		}
+		if current.MigrationsTableName != "" {
+			final_settings.MigrationsTableName = current.MigrationsTableName
+		}
+		if current.DB_DSN != "" {
+			final_settings.DB_DSN = current.DB_DSN
+		}
+		if current.DB_Driver != "" {
+			final_settings.DB_Driver = current.DB_Driver
+		}
+	}
+	return final_settings
+}
+
 func (s *SettingsServiceImpl) Get(settings_file_name string) (Settings, error) {
 	initial := s.getDefaultSettings()
-	env_settings, err := s.Settings.GetFromEnv(initial)
+	env_settings, err := s.Settings.GetFromEnv()
 	if err != nil {
 		return env_settings, err
 	}
-	settings, err := s.Settings.GetFromFile(settings_file_name, env_settings)
+	file_settings, err := s.Settings.GetFromFile(settings_file_name)
 	if err != nil {
-		return settings, err
+		return file_settings, err
 	}
+	settings := s.combineSettings(initial, env_settings, file_settings)
 	return settings, nil
 }
