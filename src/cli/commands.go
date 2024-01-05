@@ -1,59 +1,69 @@
 package cli
 
 import (
-	"log"
+	"fmt"
 
-	"github.com/guilhermewebdev/migrator/src/conf"
 	"github.com/guilhermewebdev/migrator/src/lib"
 	"github.com/guilhermewebdev/migrator/src/migration"
+	stgs "github.com/guilhermewebdev/migrator/src/settings"
+	"gopkg.in/yaml.v2"
 )
 
-func create_migration(pool lib.DB, settings conf.Settings, migration_name string) error {
-	module, err := migration.NewMigrationModule(settings, pool)
-	response, err := module.Controller().Create(migration_name)
+func create_migration(settings stgs.Settings, migration_name string) error {
+	migrations := migration.NewMigrationModule(settings, nil)
+	response, err := migrations.Create(migration_name)
 	if err != nil {
 		return err
 	}
-	log.Println(response)
+	fmt.Println(response)
 	return nil
 }
 
-func up(pool lib.DB, settings conf.Settings) error {
-	module, err := migration.NewMigrationModule(settings, pool)
-	response, err := module.Controller().Up()
+func up(pool lib.DB, settings stgs.Settings) error {
+	migrations := migration.NewMigrationModule(settings, pool)
+	response, err := migrations.Up()
 	if err != nil {
 		return err
 	}
-	log.Println(response)
+	fmt.Println(response)
 	return nil
 }
 
-func unlock(pool lib.DB, settings conf.Settings) error {
-	module, err := migration.NewMigrationModule(settings, pool)
-	response, err := module.Controller().Unlock()
+func unlock(pool lib.DB, settings stgs.Settings) error {
+	migrations := migration.NewMigrationModule(settings, pool)
+	response, err := migrations.Unlock()
 	if err != nil {
 		return err
 	}
-	log.Println(response)
+	fmt.Println(response)
 	return nil
 }
 
-func down(pool lib.DB, settings conf.Settings) error {
-	module, err := migration.NewMigrationModule(settings, pool)
-	response, err := module.Controller().Down()
+func down(pool lib.DB, settings stgs.Settings) error {
+	migrations := migration.NewMigrationModule(settings, pool)
+	response, err := migrations.Down()
 	if err != nil {
 		return err
 	}
-	log.Println(response)
+	fmt.Println(response)
 	return nil
 }
 
-func latest(pool lib.DB, settings conf.Settings) error {
-	module, err := migration.NewMigrationModule(settings, pool)
-	response, err := module.Controller().Latest()
+func latest(pool lib.DB, settings stgs.Settings) error {
+	migrations := migration.NewMigrationModule(settings, pool)
+	response, err := migrations.Latest()
 	if err != nil {
 		return err
 	}
-	log.Println(response)
+	fmt.Println(response)
+	return nil
+}
+
+func settings(settings stgs.Settings) error {
+	yamlData, err := yaml.Marshal(&settings)
+	if err != nil {
+		return err
+	}
+	fmt.Println(string(yamlData))
 	return nil
 }

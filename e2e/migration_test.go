@@ -18,6 +18,11 @@ func set_env(envs env_set) {
 	}
 }
 
+func file_exists(filename string) bool {
+	_, err := os.Stat(filename)
+	return !os.IsNotExist(err)
+}
+
 var test_envs = []env_set{
 	{
 		"DB_DSN":    "user:pass@tcp(mysql:3306)/test",

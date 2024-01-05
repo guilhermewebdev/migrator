@@ -6,8 +6,8 @@ import (
 	"regexp"
 	"testing"
 
-	"github.com/guilhermewebdev/migrator/src/conf"
 	"github.com/guilhermewebdev/migrator/src/migration"
+	"github.com/guilhermewebdev/migrator/src/settings"
 )
 
 type diskMock struct {
@@ -37,8 +37,8 @@ func (repo *diskMock) Read(file_path string) (string, error) {
 	return repo.readMock, repo.readErrorMock
 }
 
-func get_settings() conf.Settings {
-	settings := conf.Settings{
+func get_settings() settings.Settings {
+	settings := settings.Settings{
 		MigrationsDir:       "./migrations",
 		MigrationsTableName: "migrations",
 	}

@@ -9,8 +9,8 @@ import (
 	"text/template"
 	"time"
 
-	"github.com/guilhermewebdev/migrator/src/conf"
 	"github.com/guilhermewebdev/migrator/src/lib"
+	"github.com/guilhermewebdev/migrator/src/settings"
 	"golang.org/x/exp/maps"
 )
 
@@ -31,7 +31,7 @@ type scannable interface {
 
 type ReferenceRepositoryImpl struct {
 	DB       lib.DB
-	Settings conf.Settings
+	Settings settings.Settings
 }
 
 var (
