@@ -8,7 +8,7 @@ type SettingsServiceImpl struct {
 	Settings SettingsRepository
 }
 
-func (s *SettingsServiceImpl) getDefaultSettings() Settings {
+func (s *SettingsServiceImpl) get_default_settings() Settings {
 	return Settings{
 		MigrationsDir:       "./migrations",
 		MigrationsTableName: "migrations",
@@ -17,7 +17,7 @@ func (s *SettingsServiceImpl) getDefaultSettings() Settings {
 	}
 }
 
-func (s *SettingsServiceImpl) combineSettings(stgs ...Settings) Settings {
+func (s *SettingsServiceImpl) combine_settings(stgs ...Settings) Settings {
 	var final_settings Settings
 	for _, current := range stgs {
 		if current.MigrationsDir != "" {
@@ -37,7 +37,7 @@ func (s *SettingsServiceImpl) combineSettings(stgs ...Settings) Settings {
 }
 
 func (s *SettingsServiceImpl) Get(settings_file_name string) (Settings, error) {
-	initial := s.getDefaultSettings()
+	initial := s.get_default_settings()
 	env_settings, err := s.Settings.GetFromEnv()
 	if err != nil {
 		return env_settings, err
@@ -46,6 +46,6 @@ func (s *SettingsServiceImpl) Get(settings_file_name string) (Settings, error) {
 	if err != nil {
 		return file_settings, err
 	}
-	settings := s.combineSettings(initial, env_settings, file_settings)
+	settings := s.combine_settings(initial, env_settings, file_settings)
 	return settings, nil
 }

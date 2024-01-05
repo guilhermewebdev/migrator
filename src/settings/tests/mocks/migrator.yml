@@ -1,0 +1,4 @@
+migrations_dir: ./test
+migrations_table_name: testing_table_name
+db_dsn: testing_dsn
+db_driver: testing_driver
