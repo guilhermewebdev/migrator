@@ -1,8 +1,8 @@
 package migration
 
 import (
-	"github.com/guilhermewebdev/migrator/src/conf"
 	"github.com/guilhermewebdev/migrator/src/lib"
+	stgs "github.com/guilhermewebdev/migrator/src/settings"
 )
 
 type MigrationModule interface {
@@ -17,7 +17,7 @@ func (mod *MigrationModuleImpl) Controller() Controller {
 	return mod.controller
 }
 
-func NewMigrationModule(settings conf.Settings, pool lib.DB) Controller {
+func NewMigrationModule(settings stgs.Settings, pool lib.DB) Controller {
 	var disk lib.Disk = &lib.DiskImpl{}
 	var migrations MigrationRepository = &MigrationRepositoryImpl{
 		Disk:     disk,

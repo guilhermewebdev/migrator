@@ -3,13 +3,12 @@ package cli
 import (
 	"fmt"
 
-	"github.com/guilhermewebdev/migrator/src/conf"
 	"github.com/guilhermewebdev/migrator/src/lib"
 	"github.com/guilhermewebdev/migrator/src/migration"
 	stgs "github.com/guilhermewebdev/migrator/src/settings"
 )
 
-func create_migration(pool lib.DB, settings conf.Settings, migration_name string) error {
+func create_migration(pool lib.DB, settings stgs.Settings, migration_name string) error {
 	migrations := migration.NewMigrationModule(settings, pool)
 	response, err := migrations.Create(migration_name)
 	if err != nil {
@@ -19,7 +18,7 @@ func create_migration(pool lib.DB, settings conf.Settings, migration_name string
 	return nil
 }
 
-func up(pool lib.DB, settings conf.Settings) error {
+func up(pool lib.DB, settings stgs.Settings) error {
 	migrations := migration.NewMigrationModule(settings, pool)
 	response, err := migrations.Up()
 	if err != nil {
@@ -29,7 +28,7 @@ func up(pool lib.DB, settings conf.Settings) error {
 	return nil
 }
 
-func unlock(pool lib.DB, settings conf.Settings) error {
+func unlock(pool lib.DB, settings stgs.Settings) error {
 	migrations := migration.NewMigrationModule(settings, pool)
 	response, err := migrations.Unlock()
 	if err != nil {
@@ -39,7 +38,7 @@ func unlock(pool lib.DB, settings conf.Settings) error {
 	return nil
 }
 
-func down(pool lib.DB, settings conf.Settings) error {
+func down(pool lib.DB, settings stgs.Settings) error {
 	migrations := migration.NewMigrationModule(settings, pool)
 	response, err := migrations.Down()
 	if err != nil {
@@ -49,7 +48,7 @@ func down(pool lib.DB, settings conf.Settings) error {
 	return nil
 }
 
-func latest(pool lib.DB, settings conf.Settings) error {
+func latest(pool lib.DB, settings stgs.Settings) error {
 	migrations := migration.NewMigrationModule(settings, pool)
 	response, err := migrations.Latest()
 	if err != nil {
