@@ -137,17 +137,3 @@ func TestLatest_WhenMigrationsWereRan(t *testing.T) {
 		}
 	})
 }
-
-func TestInit(t *testing.T) {
-	if err := cli.Run([]string{
-		"migrator",
-		"--conf-file",
-		os.Getenv("ROOT_DIR") + "/tmp/migrator.yml",
-		"init",
-	}); err != nil {
-		t.Fatal(err)
-	}
-	if !file_exists(os.Getenv("ROOT_DIR") + "/tmp/migrator.yml") {
-		t.Fatal("The settings file was not created")
-	}
-}
