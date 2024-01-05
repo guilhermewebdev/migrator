@@ -147,6 +147,18 @@ func BuildRouter() *lib_cli.App {
 					return latest(ctx.pool, ctx.s)
 				}),
 			},
+			{
+				Name:  "settings",
+				Usage: "Show settings",
+				Action: func(ctx *lib_cli.Context) error {
+					file_name_from_args := ctx.String("conf-file")
+					var settings_file string = "migrator.yml"
+					if len(file_name_from_args) > 0 {
+						settings_file = file_name_from_args
+					}
+					return settings(settings_file)
+				},
+			},
 		},
 	}
 	return app

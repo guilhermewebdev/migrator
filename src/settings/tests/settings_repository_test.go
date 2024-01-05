@@ -60,3 +60,15 @@ func TestGetSettingsFromFile_WhenFileIsInvalid(t *testing.T) {
 		t.Fatal(settings, "is not", expected)
 	}
 }
+
+func TestGetSettingsFromFile_WhenFileNotExists(t *testing.T) {
+	var repository settings.SettingsRepository = &settings.SettingsRepositoryImpl{}
+	expected := settings.Settings{}
+	settings, err := repository.GetFromFile("migrator.yml")
+	if err != nil {
+		t.Fatal("Error should be raised")
+	}
+	if settings != expected {
+		t.Fatal(settings, "is not", expected)
+	}
+}

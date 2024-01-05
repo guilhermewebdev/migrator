@@ -1,7 +1,6 @@
 package settings
 
 import (
-	"fmt"
 	"os"
 	"path/filepath"
 
@@ -41,7 +40,7 @@ func (r *SettingsRepositoryImpl) search_file_in_parent_directories(file_name str
 		}
 		current_dir = filepath.Dir(current_dir)
 	}
-	return "", fmt.Errorf("File '%s' not found on parent directories", file_name)
+	return "", nil
 }
 
 func (r *SettingsRepositoryImpl) get_settings_file_content(file_path string) (Settings, error) {
@@ -61,7 +60,7 @@ func (r *SettingsRepositoryImpl) get_settings_file_content(file_path string) (Se
 func (r *SettingsRepositoryImpl) GetFromFile(file_name string) (Settings, error) {
 	file_path, err := r.search_file_in_parent_directories(file_name)
 	empty := Settings{}
-	if err != nil {
+	if err != nil || file_path == "" {
 		return empty, err
 	}
 	return r.get_settings_file_content(file_path)

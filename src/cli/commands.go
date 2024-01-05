@@ -1,59 +1,70 @@
 package cli
 
 import (
-	"log"
+	"fmt"
 
 	"github.com/guilhermewebdev/migrator/src/conf"
 	"github.com/guilhermewebdev/migrator/src/lib"
 	"github.com/guilhermewebdev/migrator/src/migration"
+	stgs "github.com/guilhermewebdev/migrator/src/settings"
 )
 
 func create_migration(pool lib.DB, settings conf.Settings, migration_name string) error {
-	module, err := migration.NewMigrationModule(settings, pool)
-	response, err := module.Controller().Create(migration_name)
+	migrations := migration.NewMigrationModule(settings, pool)
+	response, err := migrations.Create(migration_name)
 	if err != nil {
 		return err
 	}
-	log.Println(response)
+	fmt.Println(response)
 	return nil
 }
 
 func up(pool lib.DB, settings conf.Settings) error {
-	module, err := migration.NewMigrationModule(settings, pool)
-	response, err := module.Controller().Up()
+	migrations := migration.NewMigrationModule(settings, pool)
+	response, err := migrations.Up()
 	if err != nil {
 		return err
 	}
-	log.Println(response)
+	fmt.Println(response)
 	return nil
 }
 
 func unlock(pool lib.DB, settings conf.Settings) error {
-	module, err := migration.NewMigrationModule(settings, pool)
-	response, err := module.Controller().Unlock()
+	migrations := migration.NewMigrationModule(settings, pool)
+	response, err := migrations.Unlock()
 	if err != nil {
 		return err
 	}
-	log.Println(response)
+	fmt.Println(response)
 	return nil
 }
 
 func down(pool lib.DB, settings conf.Settings) error {
-	module, err := migration.NewMigrationModule(settings, pool)
-	response, err := module.Controller().Down()
+	migrations := migration.NewMigrationModule(settings, pool)
+	response, err := migrations.Down()
 	if err != nil {
 		return err
 	}
-	log.Println(response)
+	fmt.Println(response)
 	return nil
 }
 
 func latest(pool lib.DB, settings conf.Settings) error {
-	module, err := migration.NewMigrationModule(settings, pool)
-	response, err := module.Controller().Latest()
+	migrations := migration.NewMigrationModule(settings, pool)
+	response, err := migrations.Latest()
 	if err != nil {
 		return err
 	}
-	log.Println(response)
+	fmt.Println(response)
+	return nil
+}
+
+func settings(settings_file_name string) error {
+	settings := stgs.NewSettingsModule()
+	response, err := settings.Get(settings_file_name)
+	if err != nil {
+		return err
+	}
+	fmt.Println(response)
 	return nil
 }

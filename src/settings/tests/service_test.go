@@ -28,7 +28,7 @@ func TestGetSettings_Default(t *testing.T) {
 		getFromEnvError:     nil,
 		getFromFileError:    nil,
 	}
-	service := &stgs.SettingsServiceImpl{
+	service := &stgs.ServiceImpl{
 		Settings: repository,
 	}
 	settings, err := service.Get("migrator.yml")
@@ -55,7 +55,7 @@ func TestGetSettings_WhenMigrationsDirComesFromFile(t *testing.T) {
 		getFromEnvError:  nil,
 		getFromFileError: nil,
 	}
-	service := &stgs.SettingsServiceImpl{
+	service := &stgs.ServiceImpl{
 		Settings: repository,
 	}
 	settings, err := service.Get("migrator.yml")
@@ -82,7 +82,7 @@ func TestGetSettings_WhenMigrationsDirComesFromEnv(t *testing.T) {
 		getFromEnvError:     nil,
 		getFromFileError:    nil,
 	}
-	service := &stgs.SettingsServiceImpl{
+	service := &stgs.ServiceImpl{
 		Settings: repository,
 	}
 	settings, err := service.Get("migrator.yml")
@@ -110,7 +110,7 @@ func TestGetSettings_WhenDB_DSNComesFromEnv(t *testing.T) {
 		getFromEnvError:     nil,
 		getFromFileError:    nil,
 	}
-	service := &stgs.SettingsServiceImpl{
+	service := &stgs.ServiceImpl{
 		Settings: repository,
 	}
 	settings, err := service.Get("migrator.yml")
