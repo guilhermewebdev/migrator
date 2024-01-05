@@ -6,10 +6,11 @@ import (
 	"github.com/guilhermewebdev/migrator/src/lib"
 	"github.com/guilhermewebdev/migrator/src/migration"
 	stgs "github.com/guilhermewebdev/migrator/src/settings"
+	"gopkg.in/yaml.v2"
 )
 
-func create_migration(pool lib.DB, settings stgs.Settings, migration_name string) error {
-	migrations := migration.NewMigrationModule(settings, pool)
+func create_migration(settings stgs.Settings, migration_name string) error {
+	migrations := migration.NewMigrationModule(settings, nil)
 	response, err := migrations.Create(migration_name)
 	if err != nil {
 		return err
@@ -58,12 +59,11 @@ func latest(pool lib.DB, settings stgs.Settings) error {
 	return nil
 }
 
-func settings(settings_file_name string) error {
-	settings := stgs.NewSettingsModule()
-	response, err := settings.Get(settings_file_name)
+func settings(settings stgs.Settings) error {
+	yamlData, err := yaml.Marshal(&settings)
 	if err != nil {
 		return err
 	}
-	fmt.Println(response)
+	fmt.Println(string(yamlData))
 	return nil
 }

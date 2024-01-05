@@ -21,7 +21,7 @@ func load_settings(ctx *lib_cli.Context) (stgs.Settings, error) {
 	if len(file_name_from_args) > 0 {
 		settings_file = file_name_from_args
 	}
-	settings, err := stgs.NewSettingsModule().Load(settings_file)
+	settings, err := stgs.NewSettingsModule().Get(settings_file)
 	if err != nil {
 		return stgs.Settings{}, err
 	}
@@ -45,6 +45,16 @@ func load_settings(ctx *lib_cli.Context) (stgs.Settings, error) {
 }
 
 func call(action func(context) error) lib_cli.ActionFunc {
+	return func(ctx *lib_cli.Context) error {
+		settings, err := load_settings(ctx)
+		if err != nil {
+			return err
+		}
+		return action(context{settings, ctx, nil})
+	}
+}
+
+func db(action func(context) error) lib_cli.ActionFunc {
 	return func(ctx *lib_cli.Context) error {
 		settings, err := load_settings(ctx)
 		if err != nil {
@@ -122,48 +132,43 @@ func BuildRouter() *lib_cli.App {
 				Name:  "new",
 				Usage: "Creates a new migration",
 				Action: call(func(ctx context) error {
-					return create_migration(ctx.pool, ctx.s, ctx.c.Args().First())
+					return create_migration(ctx.s, ctx.c.Args().First())
 				}),
 			},
 			{
 				Name:  "up",
 				Usage: "Execute the next migration",
-				Action: call(func(ctx context) error {
+				Action: db(func(ctx context) error {
 					return up(ctx.pool, ctx.s)
 				}),
 			},
 			{
 				Name:  "down",
 				Usage: "Rollback the last migration",
-				Action: call(func(ctx context) error {
+				Action: db(func(ctx context) error {
 					return down(ctx.pool, ctx.s)
 				}),
 			},
 			{
 				Name:  "unlock",
 				Usage: "Unlock migrations",
-				Action: call(func(ctx context) error {
+				Action: db(func(ctx context) error {
 					return unlock(ctx.pool, ctx.s)
 				}),
 			},
 			{
 				Name:  "latest",
 				Usage: "Perform missing migrations",
-				Action: call(func(ctx context) error {
+				Action: db(func(ctx context) error {
 					return latest(ctx.pool, ctx.s)
 				}),
 			},
 			{
 				Name:  "settings",
 				Usage: "Show settings",
-				Action: func(ctx *lib_cli.Context) error {
-					file_name_from_args := ctx.String("conf-file")
-					var settings_file string = "migrator.yml"
-					if len(file_name_from_args) > 0 {
-						settings_file = file_name_from_args
-					}
-					return settings(settings_file)
-				},
+				Action: call(func(ctx context) error {
+					return settings(ctx.s)
+				}),
 			},
 		},
 	}
