@@ -4,6 +4,7 @@ import (
 	"os"
 	"testing"
 
+	"github.com/guilhermewebdev/migrator/src/lib"
 	lib_mocks "github.com/guilhermewebdev/migrator/src/lib/mocks"
 	"github.com/guilhermewebdev/migrator/src/settings"
 )
@@ -33,7 +34,7 @@ func TestGetSettingsFromEnv(t *testing.T) {
 
 func TestGetSettingsFromFile(t *testing.T) {
 	var repository settings.SettingsRepository = &settings.SettingsRepositoryImpl{
-		Disk: &lib_mocks.DiskMock{},
+		Disk: &lib.DiskImpl{},
 	}
 	os.Setenv("DB_DSN", "a")
 	os.Setenv("DB_DRIVER", "b")
@@ -56,7 +57,7 @@ func TestGetSettingsFromFile(t *testing.T) {
 
 func TestGetSettingsFromFile_WhenFileIsInvalid(t *testing.T) {
 	var repository settings.SettingsRepository = &settings.SettingsRepositoryImpl{
-		Disk: &lib_mocks.DiskMock{},
+		Disk: &lib.DiskImpl{},
 	}
 	expected := settings.Settings{}
 	settings, err := repository.GetFromFile("./mocks/migrator-wrong.yml")
