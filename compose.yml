@@ -2,12 +2,15 @@ version: '3'
 services:
   migrator:
     image: golang
+    user: 1000:1000
     volumes:
       - .:/usr/src/migrator
-      - ./entrypoint.sh:/usr/src/migrator/entrypoint.sh
       - go_pkg:/go/pkg
     working_dir: /usr/src/migrator
-    entrypoint: ./entrypoint.sh
+    hostname: migrator
+    entrypoint: ./docker/dev-entrypoint.sh
+    environment:
+      GOCACHE: /usr/src/migrator/.cache/go-build
   mysql:
     image: mysql
     volumes:

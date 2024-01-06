@@ -1,3 +1,6 @@
-FROM migrator:build as build
+FROM guilhermewebdev/migrator:build as build
 FROM debian:stable-slim
 COPY --from=build /migrator/bin/migrate /bin/migrate
+RUN groupadd --gid 1000 migrator && \
+    useradd -Mr --uid 1000 --gid 1000 -s /bin/bash migrator
+USER migrator

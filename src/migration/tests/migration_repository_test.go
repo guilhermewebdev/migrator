@@ -2,43 +2,16 @@ package migration_test
 
 import (
 	"log"
-	"path"
 	"regexp"
 	"testing"
 
-	"github.com/guilhermewebdev/migrator/src/conf"
+	lib_mocks "github.com/guilhermewebdev/migrator/src/lib/mocks"
 	"github.com/guilhermewebdev/migrator/src/migration"
+	"github.com/guilhermewebdev/migrator/src/settings"
 )
 
-type diskMock struct {
-	Creations     []string
-	Lists         []string
-	Reads         []string
-	creationMock  error
-	listMock      []string
-	listErrorMock error
-	readMock      string
-	readErrorMock error
-}
-
-func (repo *diskMock) Create(path_name string, file_name string) error {
-	full_path := path.Join(path_name, file_name)
-	repo.Creations = append(repo.Creations, full_path)
-	return repo.creationMock
-}
-
-func (repo *diskMock) List(dir string) ([]string, error) {
-	repo.Lists = append(repo.Lists, dir)
-	return repo.listMock, repo.listErrorMock
-}
-
-func (repo *diskMock) Read(file_path string) (string, error) {
-	repo.Reads = append(repo.Reads, file_path)
-	return repo.readMock, repo.readErrorMock
-}
-
-func get_settings() conf.Settings {
-	settings := conf.Settings{
+func get_settings() settings.Settings {
+	settings := settings.Settings{
 		MigrationsDir:       "./migrations",
 		MigrationsTableName: "migrations",
 	}
@@ -47,7 +20,7 @@ func get_settings() conf.Settings {
 
 func TestMigrationRepository_Create(t *testing.T) {
 	t.Parallel()
-	disk := diskMock{}
+	disk := lib_mocks.DiskMock{}
 	var repo migration.MigrationRepository = &migration.MigrationRepositoryImpl{
 		Disk:     &disk,
 		Settings: get_settings(),
@@ -65,11 +38,11 @@ func TestMigrationRepository_Create(t *testing.T) {
 
 func TestMigrationRepository_List(t *testing.T) {
 	t.Parallel()
-	disk := diskMock{
-		listMock: []string{
+	disk := lib_mocks.DiskMock{
+		ListMock: []string{
 			"test",
 		},
-		readMock: "SELECT * FROM table;",
+		ReadMock: "SELECT * FROM table;",
 	}
 	var repo migration.MigrationRepository = &migration.MigrationRepositoryImpl{
 		Disk:     &disk,
@@ -79,10 +52,10 @@ func TestMigrationRepository_List(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if len(migrations) != len(disk.listMock) {
+	if len(migrations) != len(disk.ListMock) {
 		t.Fatal(migrations, disk)
 	}
-	if migrations[0].UpQuery != disk.readMock {
+	if migrations[0].UpQuery != disk.ReadMock {
 		t.Fatal(migrations, disk)
 	}
 }

@@ -6,11 +6,11 @@
 
 ## Version
 
-Current version: 0.1
+Current version: 0.2
 
 ## Author
 
-Guilherme Isaías <guilherme@guilhermeweb.dev>
+Guilherme Isaías <guilherme@cibernetica.dev>
 
 ## Installation
 
@@ -82,22 +82,28 @@ migrate [global options] command [command options] [arguments...]
 
 ## Commands
 
-1. **new**
+1. **init**
+   - Create a new config file.
+
+2. **new**
    - Creates a new migration.
 
-2. **up**
+3. **up**
    - Executes the next migration.
 
-3. **down**
+4. **down**
    - Rolls back the last migration.
 
-4. **unlock**
+5. **unlock**
    - Unlocks migrations.
 
-5. **latest**
+6. **latest**
    - Performs missing migrations.
 
-6. **help, h**
+7. **settings**
+   - Show settings.
+
+8. **help, h**
    - Shows a list of commands or help for one command.
 
 ## Global Options
@@ -127,10 +133,10 @@ migrate [global options] command [command options] [arguments...]
 
 ```shell
 # Create a new migration
-migrate new <migration_name>
+migrate -c ./db/migrator.yml new <migration_name>
 
 # Execute the next migration
-migrate up
+migrate --driver mysql up
 
 # Rollback the last migration
 migrate down
@@ -202,4 +208,4 @@ For additional information on each command and its options, use:
 migrate [command] --help
 ```
 
-Thank you for using Migrate! If you have any questions or feedback, please contact Guilherme Isaías at <guilherme@guilhermeweb.dev>.
+Thank you for using Migrator! If you have any questions or feedback, please contact Guilherme Isaías at <guilherme@cibernetica.dev>.
