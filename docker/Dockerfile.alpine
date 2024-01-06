@@ -1,4 +1,4 @@
-FROM migrator:build as build
+FROM guilhermewebdev/migrator:build as build
 FROM alpine
 COPY --from=build /migrator/bin/migrate /bin/migrate
 RUN addgroup -S -g 1000 migrator && \

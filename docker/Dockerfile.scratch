@@ -1,4 +1,4 @@
-FROM migrator:build as build
+FROM guilhermewebdev/migrator:build as build
 RUN echo "migrator:x:1000:1000::/:/migrate" > /etc/passwd_migrator
 FROM scratch
 COPY --from=build /lib64/ld-linux-x86-64.so.2 /lib64/ld-linux-x86-64.so.2
