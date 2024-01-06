@@ -4,13 +4,13 @@ import (
 	"os"
 	"testing"
 
-	"github.com/guilhermewebdev/migrator/src/lib"
+	lib_mocks "github.com/guilhermewebdev/migrator/src/lib/mocks"
 	"github.com/guilhermewebdev/migrator/src/settings"
 )
 
 func TestGetSettingsFromEnv(t *testing.T) {
 	var repository settings.SettingsRepository = &settings.SettingsRepositoryImpl{
-		Disk: &lib.DiskImpl{},
+		Disk: &lib_mocks.DiskMock{},
 	}
 	os.Setenv("DB_DSN", "a")
 	os.Setenv("DB_DRIVER", "b")
@@ -33,7 +33,7 @@ func TestGetSettingsFromEnv(t *testing.T) {
 
 func TestGetSettingsFromFile(t *testing.T) {
 	var repository settings.SettingsRepository = &settings.SettingsRepositoryImpl{
-		Disk: &lib.DiskImpl{},
+		Disk: &lib_mocks.DiskMock{},
 	}
 	os.Setenv("DB_DSN", "a")
 	os.Setenv("DB_DRIVER", "b")
@@ -56,7 +56,7 @@ func TestGetSettingsFromFile(t *testing.T) {
 
 func TestGetSettingsFromFile_WhenFileIsInvalid(t *testing.T) {
 	var repository settings.SettingsRepository = &settings.SettingsRepositoryImpl{
-		Disk: &lib.DiskImpl{},
+		Disk: &lib_mocks.DiskMock{},
 	}
 	expected := settings.Settings{}
 	settings, err := repository.GetFromFile("./mocks/migrator-wrong.yml")
@@ -70,7 +70,7 @@ func TestGetSettingsFromFile_WhenFileIsInvalid(t *testing.T) {
 
 func TestGetSettingsFromFile_WhenFileNotExists(t *testing.T) {
 	var repository settings.SettingsRepository = &settings.SettingsRepositoryImpl{
-		Disk: &lib.DiskImpl{},
+		Disk: &lib_mocks.DiskMock{},
 	}
 	expected := settings.Settings{}
 	settings, err := repository.GetFromFile("migrator.yml")
@@ -79,5 +79,39 @@ func TestGetSettingsFromFile_WhenFileNotExists(t *testing.T) {
 	}
 	if settings != expected {
 		t.Fatal(settings, "is not", expected)
+	}
+}
+
+func TestCreateFile(t *testing.T) {
+	disk := &lib_mocks.DiskMock{}
+	var repository settings.SettingsRepository = &settings.SettingsRepositoryImpl{
+		Disk: disk,
+	}
+	err := repository.CreateFile("migrator.yml")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if disk.Creations[0] != "migrator.yml" {
+		t.Fatal("File was not created")
+	}
+	if len(disk.Creations) != 1 {
+		t.Fatal("Different than 1 files were created")
+	}
+}
+
+func TestWriteFile(t *testing.T) {
+	disk := &lib_mocks.DiskMock{}
+	var repository settings.SettingsRepository = &settings.SettingsRepositoryImpl{
+		Disk: disk,
+	}
+	err := repository.WriteFile("migrator.yml", "testing content")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if disk.Writes[0][0] != "migrator.yml" {
+		t.Fatal("File was not created")
+	}
+	if disk.Writes[0][1] != "testing content" {
+		t.Fatal("File was not wrote")
 	}
 }

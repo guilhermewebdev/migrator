@@ -12,6 +12,7 @@ type Disk interface {
 	List(dir string) ([]string, error)
 	Read(file_path string) (string, error)
 	SearchFileInParentDirectories(file_name string) (string, error)
+	Write(file_name string, content string) error
 }
 
 type DiskImpl struct{}
@@ -71,4 +72,8 @@ func (r *DiskImpl) SearchFileInParentDirectories(file_name string) (string, erro
 		current_dir = filepath.Dir(current_dir)
 	}
 	return "", nil
+}
+
+func (r *DiskImpl) Write(file_path string, content string) error {
+	return nil
 }

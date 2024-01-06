@@ -6,6 +6,7 @@ type DiskMock struct {
 	Creations                               []string
 	Lists                                   []string
 	Reads                                   []string
+	Writes                                  [][]string
 	CreationMock                            error
 	ListMock                                []string
 	ListErrorMock                           error
@@ -14,6 +15,7 @@ type DiskMock struct {
 	SearchFileInParentDirectories_file_name string
 	SearchFileInParentDirectories_return    string
 	SearchFileInParentDirectories_error     error
+	WriteError                              error
 }
 
 func (disk *DiskMock) Create(path_name string, file_name string) error {
@@ -35,4 +37,10 @@ func (disk *DiskMock) Read(file_path string) (string, error) {
 func (disk *DiskMock) SearchFileInParentDirectories(file_name string) (string, error) {
 	disk.SearchFileInParentDirectories_file_name = file_name
 	return disk.SearchFileInParentDirectories_return, disk.SearchFileInParentDirectories_error
+}
+
+func (disk *DiskMock) Write(file_name string, content string) error {
+	writing := []string{file_name, content}
+	disk.Writes = append(disk.Writes, writing)
+	return disk.WriteError
 }
