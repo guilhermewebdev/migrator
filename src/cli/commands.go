@@ -70,10 +70,10 @@ func settings_command(settings stgs.Settings) error {
 
 func init_command(settings_file_path string) error {
 	module := stgs.NewSettingsModule()
-	msg, err := module.Init(settings_file_path)
+	response, err := module.Init(settings_file_path)
 	if err != nil {
 		return err
 	}
-	fmt.Println(msg)
+	fmt.Println(response)
 	return nil
 }

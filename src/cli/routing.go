@@ -17,7 +17,7 @@ type context struct {
 
 func get_settings_file_name(ctx *lib_cli.Context) string {
 	file_name_from_args := ctx.String("conf-file")
-	var settings_file string = "migrator.yml"
+	var settings_file string = "./migrator.yml"
 	if len(file_name_from_args) > 0 {
 		settings_file = file_name_from_args
 	}
@@ -95,15 +95,13 @@ func BuildRouter() *lib_cli.App {
 			&lib_cli.StringFlag{
 				Name:    "conf-file",
 				Aliases: []string{"c"},
-				Value:   "migrator.yml",
-				Usage:   "Load configuration from `FILE`",
+				Usage:   "Load configuration from `FILE` (default: \"migrator.yml\")",
 				EnvVars: []string{"CONF_FILE"},
 			},
 			&lib_cli.StringFlag{
 				Name:    "migrations",
 				Aliases: []string{"m"},
-				Value:   "./migrations",
-				Usage:   "Select the migrations directory",
+				Usage:   "Select the migrations directory (default: \"./migrations\")",
 				EnvVars: []string{"MIGRATIONS_DIR"},
 			},
 			&lib_cli.StringFlag{
@@ -120,9 +118,8 @@ func BuildRouter() *lib_cli.App {
 			},
 			&lib_cli.StringFlag{
 				Name:    "table",
-				Value:   "migrations",
 				Aliases: []string{"t"},
-				Usage:   "Migrations table name",
+				Usage:   "Migrations table name(default: \"migrations\") ",
 				EnvVars: []string{"MIGRATIONS_TABLE"},
 			},
 		},
