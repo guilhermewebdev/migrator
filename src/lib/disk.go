@@ -11,6 +11,7 @@ type Disk interface {
 	Create(path_name string, file_name string) error
 	List(dir string) ([]string, error)
 	Read(file_path string) (string, error)
+	SearchFileInParentDirectories(file_name string) (string, error)
 }
 
 type DiskImpl struct{}
@@ -51,4 +52,23 @@ func (d *DiskImpl) Read(file_path string) (string, error) {
 		return "", err
 	}
 	return string(data), nil
+}
+
+func (r *DiskImpl) SearchFileInParentDirectories(file_name string) (string, error) {
+	current_dir, err := os.Getwd()
+	if err != nil {
+		return "", err
+	}
+	for {
+		file_path := filepath.Join(current_dir, file_name)
+		_, err := os.Stat(file_path)
+		if err == nil {
+			return file_path, nil
+		}
+		if current_dir == filepath.Dir(current_dir) {
+			break
+		}
+		current_dir = filepath.Dir(current_dir)
+	}
+	return "", nil
 }

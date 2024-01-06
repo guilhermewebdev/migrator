@@ -4,11 +4,14 @@ import (
 	"os"
 	"testing"
 
+	"github.com/guilhermewebdev/migrator/src/lib"
 	"github.com/guilhermewebdev/migrator/src/settings"
 )
 
 func TestGetSettingsFromEnv(t *testing.T) {
-	var repository settings.SettingsRepository = &settings.SettingsRepositoryImpl{}
+	var repository settings.SettingsRepository = &settings.SettingsRepositoryImpl{
+		Disk: &lib.DiskImpl{},
+	}
 	os.Setenv("DB_DSN", "a")
 	os.Setenv("DB_DRIVER", "b")
 	os.Setenv("MIGRATIONS_DIR", "c")
@@ -29,7 +32,9 @@ func TestGetSettingsFromEnv(t *testing.T) {
 }
 
 func TestGetSettingsFromFile(t *testing.T) {
-	var repository settings.SettingsRepository = &settings.SettingsRepositoryImpl{}
+	var repository settings.SettingsRepository = &settings.SettingsRepositoryImpl{
+		Disk: &lib.DiskImpl{},
+	}
 	os.Setenv("DB_DSN", "a")
 	os.Setenv("DB_DRIVER", "b")
 	os.Setenv("MIGRATIONS_DIR", "c")
@@ -50,7 +55,9 @@ func TestGetSettingsFromFile(t *testing.T) {
 }
 
 func TestGetSettingsFromFile_WhenFileIsInvalid(t *testing.T) {
-	var repository settings.SettingsRepository = &settings.SettingsRepositoryImpl{}
+	var repository settings.SettingsRepository = &settings.SettingsRepositoryImpl{
+		Disk: &lib.DiskImpl{},
+	}
 	expected := settings.Settings{}
 	settings, err := repository.GetFromFile("./mocks/migrator-wrong.yml")
 	if err == nil {
@@ -62,7 +69,9 @@ func TestGetSettingsFromFile_WhenFileIsInvalid(t *testing.T) {
 }
 
 func TestGetSettingsFromFile_WhenFileNotExists(t *testing.T) {
-	var repository settings.SettingsRepository = &settings.SettingsRepositoryImpl{}
+	var repository settings.SettingsRepository = &settings.SettingsRepositoryImpl{
+		Disk: &lib.DiskImpl{},
+	}
 	expected := settings.Settings{}
 	settings, err := repository.GetFromFile("migrator.yml")
 	if err != nil {
