@@ -103,11 +103,26 @@ jobs:
       matrix:
         include:
           - flavor: slim
+            file: slim
+            arch: linux/amd64,linux/arm64
           - flavor: alpine
+            file: alpine
+            arch: linux/amd64,linux/arm64
           - flavor: bullseye
+            file: bullseye
+            arch: linux/amd64,linux/arm64
           - flavor: bookworm
+            file: bookworm
+            arch: linux/amd64,linux/arm64
           - flavor: scratch
+            file: scratch.amd64
+            arch: linux/amd64
+          - flavor: scratch
+            file: scratch.arm64
+            arch: inux/arm64
           - flavor: debian
+            file: debian
+            arch: linux/amd64,linux/arm64
     permissions:
       contents: read
       packages: write
@@ -141,9 +156,9 @@ jobs:
       uses: docker/build-push-action@v5
       with:
         context: .
-        file: ./docker/Dockerfile.${{ matrix.flavor }}
+        file: ./docker/Dockerfile.${{ matrix.file }}
         push: ${{ github.event_name != 'pull_request' }}
-        platforms: linux/amd64,linux/arm64
+        platforms: ${{ matrix.arch }}
         tags: |
           ${{ steps.meta.outputs.tags }}
           ${{ secrets.DOCKERHUB_USERNAME }}/migrator:${{ matrix.flavor }}
