@@ -10,6 +10,8 @@ import (
 type SettingsRepository interface {
 	GetFromEnv() (Settings, error)
 	GetFromFile(file_name string) (Settings, error)
+	CreateFile(file_name string) error
+	WriteFile(file_name string, content string) error
 }
 
 type SettingsRepositoryImpl struct{}
@@ -64,4 +66,12 @@ func (r *SettingsRepositoryImpl) GetFromFile(file_name string) (Settings, error)
 		return empty, err
 	}
 	return r.get_settings_file_content(file_path)
+}
+
+func (r *SettingsRepositoryImpl) CreateFile(file_name string) error {
+	return nil
+}
+
+func (r *SettingsRepositoryImpl) WriteFile(file_name string, content string) error {
+	return nil
 }

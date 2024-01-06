@@ -2,6 +2,7 @@ package settings
 
 type Service interface {
 	Get(settings_file_name string) (Settings, error)
+	Init(settings_file_name string) error
 }
 
 type ServiceImpl struct {
@@ -48,4 +49,8 @@ func (s *ServiceImpl) Get(settings_file_name string) (Settings, error) {
 	}
 	settings := s.combine_settings(initial, env_settings, file_settings)
 	return settings, nil
+}
+
+func (s *ServiceImpl) Init(settings_file_name string) error {
+	return nil
 }
