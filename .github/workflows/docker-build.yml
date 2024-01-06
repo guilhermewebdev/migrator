@@ -24,7 +24,7 @@ jobs:
     - name: Run Unit Tests
       run: make unit
 
-  build_latest:
+  build_base:
     runs-on: ubuntu-latest
     needs: tests
     permissions:
@@ -41,13 +41,43 @@ jobs:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v3
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
     - name: Build base image build
       uses: docker/build-push-action@v5
       with:
         context: .
         file: ./docker/Dockerfile.build
-        push: false
-        tags: migrator:build
+        platforms: linux/amd64,linux/arm64
+        push: true
+        tags: guilhermewebdev/migrator:build
+
+  build_latest:
+    runs-on: ubuntu-latest
+    needs: build_base
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Login to Docker Hub
+      uses: docker/login-action@v3
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v3
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
 
     - name: Extract metadata (tags, labels) for Docker
       id: meta
@@ -60,23 +90,39 @@ jobs:
       with:
         context: .
         file: ./docker/Dockerfile
+        platforms: linux/amd64,linux/arm64
         push: ${{ github.event_name != 'pull_request' }}
         tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
 
   build:
     runs-on: ubuntu-latest
-    needs: tests
+    needs: build_base
     strategy:
       fail-fast: false
       matrix:
         include:
           - flavor: slim
+            file: slim
+            arch: linux/amd64,linux/arm64
           - flavor: alpine
+            file: alpine
+            arch: linux/amd64,linux/arm64
           - flavor: bullseye
+            file: bullseye
+            arch: linux/amd64,linux/arm64
           - flavor: bookworm
+            file: bookworm
+            arch: linux/amd64,linux/arm64
           - flavor: scratch
+            file: scratch.amd64
+            arch: linux/amd64
+          - flavor: scratch
+            file: scratch.arm64
+            arch: inux/arm64
           - flavor: debian
+            file: debian
+            arch: linux/amd64,linux/arm64
     permissions:
       contents: read
       packages: write
@@ -85,19 +131,17 @@ jobs:
     - name: Checkout Repository
       uses: actions/checkout@v4
 
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v3
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
     - name: Login to Docker Hub
       uses: docker/login-action@v3
       with:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-    - name: Build base image build
-      uses: docker/build-push-action@v5
-      with:
-        context: .
-        file: ./docker/Dockerfile.build
-        push: false
-        tags: migrator:build
 
     - name: Extract metadata (tags, labels) for Docker
       id: meta
@@ -112,8 +156,9 @@ jobs:
       uses: docker/build-push-action@v5
       with:
         context: .
-        file: ./docker/Dockerfile.${{ matrix.flavor }}
+        file: ./docker/Dockerfile.${{ matrix.file }}
         push: ${{ github.event_name != 'pull_request' }}
+        platforms: ${{ matrix.arch }}
         tags: |
           ${{ steps.meta.outputs.tags }}
           ${{ secrets.DOCKERHUB_USERNAME }}/migrator:${{ matrix.flavor }}

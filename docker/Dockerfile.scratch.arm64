@@ -1,0 +1,9 @@
+FROM guilhermewebdev/migrator:build as build
+RUN echo "migrator:x:1000:1000::/:/migrate" > /etc/passwd_migrator
+FROM scratch
+COPY --from=build /lib/ld-linux-aarch64.so.1 /lib/ld-linux-aarch64.so.1
+COPY --from=build /lib/aarch64-linux-gnu/libc.so.6 /lib/aarch64-linux-gnu/libc.so.6
+COPY --from=build /migrator/bin/migrate /migrate
+COPY --from=build /etc/passwd_migrator /etc/passwd
+ENTRYPOINT [ "/migrate" ]
+USER migrator
