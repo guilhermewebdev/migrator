@@ -9,7 +9,7 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-func create_migration(settings stgs.Settings, migration_name string) error {
+func create_migration_command(settings stgs.Settings, migration_name string) error {
 	migrations := migration.NewMigrationModule(settings, nil)
 	response, err := migrations.Create(migration_name)
 	if err != nil {
@@ -19,7 +19,7 @@ func create_migration(settings stgs.Settings, migration_name string) error {
 	return nil
 }
 
-func up(pool lib.DB, settings stgs.Settings) error {
+func up_command(pool lib.DB, settings stgs.Settings) error {
 	migrations := migration.NewMigrationModule(settings, pool)
 	response, err := migrations.Up()
 	if err != nil {
@@ -29,7 +29,7 @@ func up(pool lib.DB, settings stgs.Settings) error {
 	return nil
 }
 
-func unlock(pool lib.DB, settings stgs.Settings) error {
+func unlock_command(pool lib.DB, settings stgs.Settings) error {
 	migrations := migration.NewMigrationModule(settings, pool)
 	response, err := migrations.Unlock()
 	if err != nil {
@@ -39,7 +39,7 @@ func unlock(pool lib.DB, settings stgs.Settings) error {
 	return nil
 }
 
-func down(pool lib.DB, settings stgs.Settings) error {
+func down_command(pool lib.DB, settings stgs.Settings) error {
 	migrations := migration.NewMigrationModule(settings, pool)
 	response, err := migrations.Down()
 	if err != nil {
@@ -49,7 +49,7 @@ func down(pool lib.DB, settings stgs.Settings) error {
 	return nil
 }
 
-func latest(pool lib.DB, settings stgs.Settings) error {
+func latest_command(pool lib.DB, settings stgs.Settings) error {
 	migrations := migration.NewMigrationModule(settings, pool)
 	response, err := migrations.Latest()
 	if err != nil {
@@ -59,11 +59,21 @@ func latest(pool lib.DB, settings stgs.Settings) error {
 	return nil
 }
 
-func settings(settings stgs.Settings) error {
+func settings_command(settings stgs.Settings) error {
 	yamlData, err := yaml.Marshal(&settings)
 	if err != nil {
 		return err
 	}
 	fmt.Println(string(yamlData))
+	return nil
+}
+
+func init_command(settings_file_path string) error {
+	module := stgs.NewSettingsModule()
+	msg, err := module.Init(settings_file_path)
+	if err != nil {
+		return err
+	}
+	fmt.Println(msg)
 	return nil
 }

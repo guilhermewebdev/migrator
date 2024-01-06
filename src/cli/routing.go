@@ -15,12 +15,17 @@ type context struct {
 	pool lib.DB
 }
 
-func load_settings(ctx *lib_cli.Context) (stgs.Settings, error) {
+func get_settings_file_name(ctx *lib_cli.Context) string {
 	file_name_from_args := ctx.String("conf-file")
 	var settings_file string = "migrator.yml"
 	if len(file_name_from_args) > 0 {
 		settings_file = file_name_from_args
 	}
+	return settings_file
+}
+
+func load_settings(ctx *lib_cli.Context) (stgs.Settings, error) {
+	settings_file := get_settings_file_name(ctx)
 	settings, err := stgs.NewSettingsModule().Get(settings_file)
 	if err != nil {
 		return stgs.Settings{}, err
@@ -129,45 +134,52 @@ func BuildRouter() *lib_cli.App {
 		},
 		Commands: []*lib_cli.Command{
 			{
+				Name:  "init",
+				Usage: "Create a new config file",
+				Action: func(ctx *lib_cli.Context) error {
+					return init_command(get_settings_file_name(ctx))
+				},
+			},
+			{
 				Name:  "new",
 				Usage: "Creates a new migration",
 				Action: call(func(ctx context) error {
-					return create_migration(ctx.s, ctx.c.Args().First())
+					return create_migration_command(ctx.s, ctx.c.Args().First())
 				}),
 			},
 			{
 				Name:  "up",
 				Usage: "Execute the next migration",
 				Action: db(func(ctx context) error {
-					return up(ctx.pool, ctx.s)
+					return up_command(ctx.pool, ctx.s)
 				}),
 			},
 			{
 				Name:  "down",
 				Usage: "Rollback the last migration",
 				Action: db(func(ctx context) error {
-					return down(ctx.pool, ctx.s)
+					return down_command(ctx.pool, ctx.s)
 				}),
 			},
 			{
 				Name:  "unlock",
 				Usage: "Unlock migrations",
 				Action: db(func(ctx context) error {
-					return unlock(ctx.pool, ctx.s)
+					return unlock_command(ctx.pool, ctx.s)
 				}),
 			},
 			{
 				Name:  "latest",
 				Usage: "Perform missing migrations",
 				Action: db(func(ctx context) error {
-					return latest(ctx.pool, ctx.s)
+					return latest_command(ctx.pool, ctx.s)
 				}),
 			},
 			{
 				Name:  "settings",
 				Usage: "Show settings",
 				Action: call(func(ctx context) error {
-					return settings(ctx.s)
+					return settings_command(ctx.s)
 				}),
 			},
 		},
