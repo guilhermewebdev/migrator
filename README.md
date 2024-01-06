@@ -10,7 +10,7 @@ Current version: 0.2
 
 ## Author
 
-Guilherme Isaías <guilherme@guilhermeweb.dev>
+Guilherme Isaías <guilherme@cibernetica.dev>
 
 ## Installation
 
@@ -202,4 +202,4 @@ For additional information on each command and its options, use:
 migrate [command] --help
 ```
 
-Thank you for using Migrate! If you have any questions or feedback, please contact Guilherme Isaías at <guilherme@guilhermeweb.dev>.
+Thank you for using Migrate! If you have any questions or feedback, please contact Guilherme Isaías at <guilherme@cibernetica.dev>.
