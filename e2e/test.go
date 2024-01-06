@@ -23,7 +23,7 @@ func file_exists(filename string) bool {
 
 var test_envs = []env_set{
 	{
-		"DB_DSN":    "user:pass@tcp(mysql:3306)/test",
+		"DB_DSN":    "user:pass@tcp(mysql:3306)/test?multiStatements=true",
 		"DB_DRIVER": "mysql",
 	},
 	{
