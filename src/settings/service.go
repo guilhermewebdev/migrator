@@ -1,5 +1,9 @@
 package settings
 
+import (
+	_ "embed"
+)
+
 type Service interface {
 	Get(settings_file_name string) (Settings, error)
 	Init(settings_file_name string) error
@@ -8,6 +12,11 @@ type Service interface {
 type ServiceImpl struct {
 	Settings SettingsRepository
 }
+
+var (
+	//go:embed models/base.yml
+	base_settings_file string
+)
 
 func (s *ServiceImpl) get_default_settings() Settings {
 	return Settings{
@@ -52,5 +61,11 @@ func (s *ServiceImpl) Get(settings_file_name string) (Settings, error) {
 }
 
 func (s *ServiceImpl) Init(settings_file_name string) error {
+	if err := s.Settings.CreateFile(settings_file_name); err != nil {
+		return err
+	}
+	if err := s.Settings.WriteFile(settings_file_name, base_settings_file); err != nil {
+		return err
+	}
 	return nil
 }

@@ -1,0 +1,11 @@
+# Directory where migration files are stored
+migrations_dir: ./migrations
+
+# Name of the table to track migrations in the database
+migrations_table_name: migrations
+
+# Database connection string (DSN)
+db_dsn: "$DB_PROTOCOL://$DB_USER:$DB_PASS@$DB_HOST:$DB_PORT/$DB_NAME"
+
+# Database driver (Supported drivers: mysql, postgres, sqlserver, sqlite, sqlite3, oracle)
+db_driver: postgres
