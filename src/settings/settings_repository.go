@@ -56,5 +56,5 @@ func (r *SettingsRepositoryImpl) CreateFile(file_path string) error {
 }
 
 func (r *SettingsRepositoryImpl) WriteFile(file_path string, content string) error {
-	return nil
+	return r.Disk.Write(file_path, content)
 }

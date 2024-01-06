@@ -78,5 +78,5 @@ func (r *DiskImpl) SearchFileInParentDirectories(file_name string) (string, erro
 }
 
 func (r *DiskImpl) Write(file_path string, content string) error {
-	return nil
+	return os.WriteFile(file_path, []byte(content), 0644)
 }
