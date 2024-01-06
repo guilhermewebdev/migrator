@@ -1,7 +1,5 @@
 package lib_mocks
 
-import "path"
-
 type DiskMock struct {
 	Creations                               []string
 	Lists                                   []string
@@ -18,9 +16,8 @@ type DiskMock struct {
 	WriteError                              error
 }
 
-func (disk *DiskMock) Create(path_name string, file_name string) error {
-	full_path := path.Join(path_name, file_name)
-	disk.Creations = append(disk.Creations, full_path)
+func (disk *DiskMock) Create(file_path string) error {
+	disk.Creations = append(disk.Creations, file_path)
 	return disk.CreationMock
 }
 

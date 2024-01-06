@@ -20,10 +20,10 @@ type MigrationRepositoryImpl struct {
 
 func (r *MigrationRepositoryImpl) Create(name string) error {
 	new_migration_path := path.Join(r.Settings.MigrationsDir, name)
-	if err := r.Disk.Create(new_migration_path, "up.sql"); err != nil {
+	if err := r.Disk.Create(new_migration_path + "/up.sql"); err != nil {
 		return err
 	}
-	if err := r.Disk.Create(new_migration_path, "down.sql"); err != nil {
+	if err := r.Disk.Create(new_migration_path + "/down.sql"); err != nil {
 		return err
 	}
 	return nil

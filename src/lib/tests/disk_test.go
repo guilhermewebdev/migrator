@@ -14,7 +14,7 @@ func clear() {
 
 func createMocks() {
 	var repo lib.Disk = &lib.DiskImpl{}
-	repo.Create("./mocks", "file.test")
+	repo.Create("./mocks/file.test")
 	os.WriteFile("./mocks/file.test", []byte("hello"), 0644)
 }
 
@@ -29,7 +29,7 @@ func setup() func() {
 func TestCreateFile(t *testing.T) {
 	defer setup()()
 	var repo lib.Disk = &lib.DiskImpl{}
-	err := repo.Create("./test", "file.sql")
+	err := repo.Create("./test/file.sql")
 	if err != nil {
 		t.Error(err)
 	}
@@ -41,7 +41,7 @@ func TestCreateFile(t *testing.T) {
 func TestCreateDeepFile(t *testing.T) {
 	defer setup()()
 	var repo lib.Disk = &lib.DiskImpl{}
-	err := repo.Create("./test/testing/test/test/tes", "file.sql")
+	err := repo.Create("./test/testing/test/test/tes/file.sql")
 	if err != nil {
 		t.Error(err)
 	}
@@ -53,9 +53,9 @@ func TestCreateDeepFile(t *testing.T) {
 func TestCreateTheSameFileMultiplesTimes(t *testing.T) {
 	defer setup()()
 	var repo lib.Disk = &lib.DiskImpl{}
-	err := repo.Create("./test/testing/test/test/tes", "file.sql")
-	repo.Create("./test/testing/test/test/tes", "file.sql")
-	repo.Create("./test/testing/test/test/tes", "file.sql")
+	err := repo.Create("./test/testing/test/test/tes/file.sql")
+	repo.Create("./test/testing/test/test/tes/file.sql")
+	repo.Create("./test/testing/test/test/tes/file.sql")
 	if err != nil {
 		t.Error(err)
 	}

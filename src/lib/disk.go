@@ -3,12 +3,11 @@ package lib
 import (
 	"io/fs"
 	"os"
-	"path"
 	"path/filepath"
 )
 
 type Disk interface {
-	Create(path_name string, file_name string) error
+	Create(file_path string) error
 	List(dir string) ([]string, error)
 	Read(file_path string) (string, error)
 	SearchFileInParentDirectories(file_name string) (string, error)
@@ -17,14 +16,18 @@ type Disk interface {
 
 type DiskImpl struct{}
 
-func (d *DiskImpl) Create(path_name string, file_name string) error {
+func (d *DiskImpl) Create(file_path string) error {
+	path_name := filepath.Dir(file_path)
 	directory, _ := filepath.Abs(path_name)
 	if _, err := os.Stat(path_name); err != nil {
 		if err := os.MkdirAll(directory, fs.ModePerm); err != nil {
 			return err
 		}
 	}
-	full_file_name := path.Join(directory, file_name)
+	full_file_name, err := filepath.Abs(file_path)
+	if err != nil {
+		return err
+	}
 	file, err := os.Create(full_file_name)
 	defer file.Close()
 	if err != nil {
