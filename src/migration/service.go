@@ -83,7 +83,7 @@ func (s *ServiceImpl) relateMigrationWithReference() ([]Relation, error) {
 		return []Relation{}, fmt.Errorf("Migrations are corrupted")
 	}
 	sort.Slice(relations, func(i, j int) bool {
-		return relations[i].Migration.Name > relations[j].Migration.Name
+		return relations[i].Migration.Name < relations[j].Migration.Name
 	})
 	return relations, nil
 }
