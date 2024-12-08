@@ -6,7 +6,7 @@
 
 ## Version
 
-Current version: 0.2
+Current version: 0.3
 
 ## Author
 

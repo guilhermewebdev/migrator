@@ -1,6 +1,7 @@
 package e2e_tests
 
 import (
+	"io"
 	"log"
 	"os"
 	"strings"
@@ -59,4 +60,15 @@ func env(test func(env_set)) {
 		test(envs)
 		count++
 	}
+}
+
+func capture_output(f func() error) (string, error) {
+	orig := os.Stdout
+	r, w, _ := os.Pipe()
+	os.Stdout = w
+	err := f()
+	os.Stdout = orig
+	w.Close()
+	out, _ := io.ReadAll(r)
+	return string(out), err
 }
