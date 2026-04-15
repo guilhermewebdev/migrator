@@ -22,7 +22,9 @@ Make sure your system meets the following requirements:
 
 Go: Ensure that Go is installed on your machine. You can download and install it from [the official Go website](https://go.dev/doc/install).
 
-Docker (optional): If you plan to build and run the migrator tool in a Docker container, make sure Docker is installed on your system. You can find instructions for installing Docker [here](https://docs.docker.com/engine/install/).
+Database Client Tools: For the schema dump feature, you must have the native client tools for your database installed on your machine (e.g., `mysqldump` for MySQL, `pg_dump` for PostgreSQL, `sqlite3` for SQLite).
+
+Docker (optional): If you plan to build and run the migrator tool in a Docker container, make sure Docker is installed on your system. You can find instructions for installing Docker [here](https://docs.docker.com/engine/install/). The provided Docker image already includes the necessary database client tools.
 
 #### Building and Installing
 1. Clone the repository to your local machine:
