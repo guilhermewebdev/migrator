@@ -26,7 +26,6 @@ func TestAutoDumpSchema(t *testing.T) {
 			t.Errorf("Auto dump schema file was not created for %s", envs["DB_DRIVER"])
 		}
         
-        // Clean up for next env
         os.Remove(schema_file)
 	})
 }
