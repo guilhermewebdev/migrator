@@ -32,11 +32,16 @@ type DB_Rows interface {
 	Scan(dest ...any) error
 }
 
-type DB interface {
+type Queryer interface {
 	Query(query string, args ...any) (*sql.Rows, error)
 	Exec(query string, args ...any) (sql.Result, error)
 	QueryRow(query string, args ...any) *sql.Row
+}
+
+type DB interface {
+	Queryer
 	Close() error
+	Begin() (*sql.Tx, error)
 }
 
 func ConnectDB(p ConnectionParams) (DB, error) {
