@@ -30,6 +30,7 @@ func NewMigrationModule(settings stgs.Settings, pool lib.DB) Controller {
 	var service Service = &ServiceImpl{
 		Migrations: migrations,
 		References: db,
+		Settings:   settings,
 	}
 	var controller Controller = &ControllerImpl{
 		Service: service,

@@ -1,7 +1,9 @@
 version: '3'
 services:
   migrator:
-    image: golang
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.dev
     user: ${UID:-1000}:${GID:-1000}
     volumes:
       - .:/usr/src/migrator:z
@@ -21,7 +23,7 @@ services:
       MYSQL_USER: user
       MYSQL_PASSWORD: pass
   postgres:
-    image: postgres
+    image: postgres:17
     volumes:
       - postgres_data:/var/lib/postgres/data
     environment:

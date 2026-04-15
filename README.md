@@ -6,7 +6,7 @@
 
 ## Version
 
-Current version: 0.4
+Current version: 0.5
 
 ## Author
 
@@ -22,7 +22,9 @@ Make sure your system meets the following requirements:
 
 Go: Ensure that Go is installed on your machine. You can download and install it from [the official Go website](https://go.dev/doc/install).
 
-Docker (optional): If you plan to build and run the migrator tool in a Docker container, make sure Docker is installed on your system. You can find instructions for installing Docker [here](https://docs.docker.com/engine/install/).
+Database Client Tools: For the schema dump feature, you must have the native client tools for your database installed on your machine (e.g., `mysqldump` for MySQL, `pg_dump` for PostgreSQL, `sqlite3` for SQLite).
+
+Docker (optional): If you plan to build and run the migrator tool in a Docker container, make sure Docker is installed on your system. You can find instructions for installing Docker [here](https://docs.docker.com/engine/install/). The provided Docker image already includes the necessary database client tools.
 
 #### Building and Installing
 1. Clone the repository to your local machine:
@@ -100,10 +102,13 @@ migrate [global options] command [command options] [arguments...]
 6. **latest**
    - Performs missing migrations.
 
-7. **settings**
+7. **schema, dump**
+   - Dump the database schema to a SQL file.
+
+8. **settings**
    - Show settings.
 
-8. **help, h**
+9. **help, h**
    - Shows a list of commands or help for one command.
 
 ## Global Options
@@ -122,6 +127,12 @@ migrate [global options] command [command options] [arguments...]
 
 - `--table value, -t value`
   - Migrations table name (default: "migrations").
+
+- `--auto-dump`
+  - Auto dump schema after migrations (default: false).
+
+- `--schema-file value`
+  - Path to the schema dump file (default: "./schema.sql").
 
 - `--help, -h`
   - Show help.
@@ -146,6 +157,9 @@ migrate unlock
 
 # Perform missing migrations
 migrate latest
+
+# Dump the database schema
+migrate schema
 ```
 
 ## Environment Variable Configuration
@@ -156,6 +170,8 @@ You can apply configurations to Migrator using environment variables. The follow
 - `DB_DRIVER`: Database driver (mysql, postgres, sqlserver, sqlite, sqlite3, or oracle).
 - `MIGRATIONS_DIR`: Select the migrations directory (default: "./migrations").
 - `MIGRATIONS_TABLE`: Migrations table name (default: "migrations").
+- `AUTO_DUMP_SCHEMA`: Auto dump schema after migrations (default: false).
+- `SCHEMA_FILE_PATH`: Path to the schema dump file (default: "./schema.sql").
 
 To set these variables, you can use your shell's syntax. For example, in Bash:
 
@@ -181,6 +197,12 @@ migrations_dir: ./migrations
 # Name of the table to track migrations in the database
 migrations_table_name: migrations
 
+# If true, generates the database schema automatically after running migrations
+auto_dump_schema: false
+
+# Path where the database schema SQL file will be generated
+schema_file_path: ./schema.sql
+
 # Database connection string (DSN)
 db_dsn: "postgres://user:pass@postgres:5432/test?sslmode=disable"
 
@@ -194,9 +216,13 @@ db_driver: postgres
 
 2. `migrations_table_name`: Defines the name of the table used to track migrations in the database. The default is set to "migrations," but you can modify it based on your preferences.
 
-3. `db_dsn`: Represents the Database Source Name (DSN), which contains information about the database connection. In the example, a PostgreSQL database connection string is provided. Update this with the appropriate credentials and connection details for your database.
+3. `auto_dump_schema`: If set to `true`, the tool will automatically generate a database schema dump after each successful migration operation (`up`, `down`, `latest`).
 
-4. `db_driver`: Specifies the database driver to be used (e.g., mysql, postgres, sqlserver, sqlite, sqlite3, oracle). In the example, the driver is set to "postgres." Choose the appropriate driver based on your database system.
+4. `schema_file_path`: The file path where the generated schema dump will be saved.
+
+5. `db_dsn`: Represents the Database Source Name (DSN), which contains information about the database connection. In the example, a PostgreSQL database connection string is provided. Update this with the appropriate credentials and connection details for your database.
+
+6. `db_driver`: Specifies the database driver to be used (e.g., mysql, postgres, sqlserver, sqlite, sqlite3, oracle). In the example, the driver is set to "postgres." Choose the appropriate driver based on your database system.
 
 Ensure that the information in the `migrator.yml` file accurately reflects your database setup. You can customize these parameters to suit your project's requirements. If needed, refer to the [Global Options](#global-options) section in the README for additional options that can be specified when running Migrate commands.
 

@@ -46,6 +46,13 @@ func load_settings(ctx *lib_cli.Context) (stgs.Settings, error) {
 	if len(table_name_from_args) > 0 {
 		settings.MigrationsTableName = table_name_from_args
 	}
+	if ctx.IsSet("auto-dump") {
+		settings.AutoDumpSchema = ctx.Bool("auto-dump")
+	}
+	schema_file_from_args := ctx.String("schema-file")
+	if len(schema_file_from_args) > 0 {
+		settings.SchemaFilePath = schema_file_from_args
+	}
 	return settings, nil
 }
 
@@ -86,7 +93,7 @@ func BuildRouter() *lib_cli.App {
 	app := &lib_cli.App{
 		Name:                 "Migrator",
 		Usage:                "Manage your databases with migrations",
-		Version:              "0.4",
+		Version:              "0.5",
 		Compiled:             time.Now().UTC(),
 		EnableBashCompletion: true,
 		HelpName:             "migrate",
@@ -122,6 +129,16 @@ func BuildRouter() *lib_cli.App {
 				Usage:   "Migrations table name(default: \"migrations\") ",
 				EnvVars: []string{"MIGRATIONS_TABLE"},
 			},
+			&lib_cli.BoolFlag{
+				Name:    "auto-dump",
+				Usage:   "Auto dump schema after migrations (default: false)",
+				EnvVars: []string{"AUTO_DUMP_SCHEMA"},
+			},
+			&lib_cli.StringFlag{
+				Name:    "schema-file",
+				Usage:   "Path to the schema dump file (default: \"./schema.sql\")",
+				EnvVars: []string{"SCHEMA_FILE_PATH"},
+			},
 		},
 		Authors: []*lib_cli.Author{
 			{
@@ -136,6 +153,14 @@ func BuildRouter() *lib_cli.App {
 				Action: func(ctx *lib_cli.Context) error {
 					return init_command(get_settings_file_name(ctx))
 				},
+			},
+			{
+				Name:    "schema",
+				Aliases: []string{"dump"},
+				Usage:   "Dump the database schema",
+				Action: db(func(ctx context) error {
+					return dump_schema_command(ctx.pool, ctx.s)
+				}),
 			},
 			{
 				Name:  "new",

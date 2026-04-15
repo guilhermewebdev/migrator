@@ -59,6 +59,16 @@ func latest_command(pool lib.DB, settings stgs.Settings) error {
 	return nil
 }
 
+func dump_schema_command(pool lib.DB, settings stgs.Settings) error {
+	migrations := migration.NewMigrationModule(settings, pool)
+	response, err := migrations.DumpSchema()
+	if err != nil {
+		return err
+	}
+	fmt.Println(response)
+	return nil
+}
+
 func settings_command(settings stgs.Settings) error {
 	yamlData, err := yaml.Marshal(&settings)
 	if err != nil {

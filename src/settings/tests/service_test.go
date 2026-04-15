@@ -57,6 +57,8 @@ func TestGetSettings_Default(t *testing.T) {
 		MigrationsTableName: "migrations",
 		DB_DSN:              "",
 		DB_Driver:           "",
+		AutoDumpSchema:      false,
+		SchemaFilePath:      "./schema.sql",
 	}
 	if settings != expected {
 		t.Fatal(expected, "is not", settings)
@@ -84,6 +86,8 @@ func TestGetSettings_WhenMigrationsDirComesFromFile(t *testing.T) {
 		MigrationsTableName: "migrations",
 		DB_DSN:              "",
 		DB_Driver:           "",
+		AutoDumpSchema:      false,
+		SchemaFilePath:      "./schema.sql",
 	}
 	if settings != expected {
 		t.Fatal(expected, "is not", settings)
@@ -111,6 +115,8 @@ func TestGetSettings_WhenMigrationsDirComesFromEnv(t *testing.T) {
 		MigrationsTableName: "migrations",
 		DB_DSN:              "",
 		DB_Driver:           "",
+		AutoDumpSchema:      false,
+		SchemaFilePath:      "./schema.sql",
 	}
 	if settings != expected {
 		t.Fatal(expected, "is not", settings)
@@ -139,6 +145,8 @@ func TestGetSettings_WhenDB_DSNComesFromEnv(t *testing.T) {
 		MigrationsTableName: "migrations",
 		DB_DSN:              "postgres://host..",
 		DB_Driver:           "",
+		AutoDumpSchema:      false,
+		SchemaFilePath:      "./schema.sql",
 	}
 	if settings != expected {
 		t.Fatal(expected, "is not", settings)

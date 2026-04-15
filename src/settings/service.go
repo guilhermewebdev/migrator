@@ -24,6 +24,8 @@ func (s *ServiceImpl) get_default_settings() Settings {
 		MigrationsTableName: "migrations",
 		DB_DSN:              "",
 		DB_Driver:           "",
+		AutoDumpSchema:      false,
+		SchemaFilePath:      "./schema.sql",
 	}
 }
 
@@ -41,6 +43,12 @@ func (s *ServiceImpl) combine_settings(stgs ...Settings) Settings {
 		}
 		if current.DB_Driver != "" {
 			final_settings.DB_Driver = current.DB_Driver
+		}
+		if current.AutoDumpSchema {
+			final_settings.AutoDumpSchema = current.AutoDumpSchema
+		}
+		if current.SchemaFilePath != "" {
+			final_settings.SchemaFilePath = current.SchemaFilePath
 		}
 	}
 	return final_settings

@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/guilhermewebdev/migrator/src/lib"
+	stgs "github.com/guilhermewebdev/migrator/src/settings"
 )
 
 type Service interface {
@@ -15,11 +16,25 @@ type Service interface {
 	Unlock() error
 	Down() (Migration, error)
 	Latest() ([]Migration, error)
+	DumpSchema() error
 }
 
 type ServiceImpl struct {
 	Migrations MigrationRepository
 	References ReferenceRepository
+	Settings   stgs.Settings
+}
+
+func (s *ServiceImpl) auto_dump() {
+	if s.Settings.AutoDumpSchema {
+		if err := s.DumpSchema(); err != nil {
+			log.Println("Failed to auto dump schema:", err)
+		}
+	}
+}
+
+func (s *ServiceImpl) DumpSchema() error {
+	return lib.DumpSchema(s.Settings.DB_Driver, s.Settings.DB_DSN, s.Settings.SchemaFilePath)
 }
 
 func (s *ServiceImpl) semaphore() func() {
@@ -40,6 +55,7 @@ func (s *ServiceImpl) semaphore() func() {
 		if err = s.References.Unlock(); err != nil {
 			log.Fatal(err)
 		}
+		s.auto_dump()
 	}
 }
 

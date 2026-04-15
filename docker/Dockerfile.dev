@@ -1,6 +1,5 @@
 FROM golang
 RUN apt-get update && apt-get install -y default-mysql-client postgresql-client sqlite3
-WORKDIR /migrator
+WORKDIR /usr/src/migrator
 COPY . .
-ENV SRC_DIR /migrator
-RUN ./bin/build
+ENV PATH=$PATH:/usr/src/migrator/bin
