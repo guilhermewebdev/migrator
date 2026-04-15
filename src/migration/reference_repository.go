@@ -91,28 +91,28 @@ func (r *ReferenceRepositoryImpl) format(query string, values ...P) (string, err
 	return formatted.String(), nil
 }
 
-func (r *ReferenceRepositoryImpl) exec(query string, values ...P) (sql.Result, error) {
+func (r *ReferenceRepositoryImpl) exec(q lib.Queryer, query string, values ...P) (sql.Result, error) {
 	formatted, err := r.format(query, values...)
 	if err != nil {
 		return nil, err
 	}
-	return r.DB.Exec(formatted)
+	return q.Exec(formatted)
 }
 
-func (r *ReferenceRepositoryImpl) query(query string, values ...P) (lib.DB_Rows, error) {
+func (r *ReferenceRepositoryImpl) query(q lib.Queryer, query string, values ...P) (lib.DB_Rows, error) {
 	formatted, err := r.format(query, values...)
 	if err != nil {
 		return &sql.Rows{}, err
 	}
-	return r.DB.Query(formatted)
+	return q.Query(formatted)
 }
 
-func (r *ReferenceRepositoryImpl) query_row(query string, values ...P) (lib.DB_Row, error) {
+func (r *ReferenceRepositoryImpl) query_row(q lib.Queryer, query string, values ...P) (lib.DB_Row, error) {
 	formatted, err := r.format(query, values...)
 	if err != nil {
 		return &sql.Row{}, err
 	}
-	row := r.DB.QueryRow(formatted)
+	row := q.QueryRow(formatted)
 	return row, row.Err()
 }
 
@@ -134,17 +134,17 @@ func (r *ReferenceRepositoryImpl) scan_ref(row scannable) (Reference, error) {
 }
 
 func (r *ReferenceRepositoryImpl) Prepare() error {
-	if _, err := r.exec(create_reference_table_sql); err != nil {
+	if _, err := r.exec(r.DB, create_reference_table_sql); err != nil {
 		return err
 	}
-	if _, err := r.exec(create_lock_table_sql); err != nil {
+	if _, err := r.exec(r.DB, create_lock_table_sql); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (r *ReferenceRepositoryImpl) genReferenceId() (int, error) {
-	row, err := r.query_row(next_id_sql)
+func (r *ReferenceRepositoryImpl) genReferenceId(q lib.Queryer) (int, error) {
+	row, err := r.query_row(q, next_id_sql)
 	if err != nil {
 		return 0, err
 	}
@@ -152,11 +152,10 @@ func (r *ReferenceRepositoryImpl) genReferenceId() (int, error) {
 	row.Scan(&next_id)
 	return next_id, row.Err()
 }
-
 func (r *ReferenceRepositoryImpl) List() ([]Reference, error) {
 	var references []Reference
 	query := list_references_sql
-	rows, err := r.query(query)
+	rows, err := r.query(r.DB, query)
 	if err != nil {
 		return references, err
 	}
@@ -174,37 +173,47 @@ func (r *ReferenceRepositoryImpl) List() ([]Reference, error) {
 }
 
 func (r *ReferenceRepositoryImpl) Up(m Migration) error {
-	if _, err := r.DB.Exec(m.UpQuery); err != nil {
-		return err
-	}
-	id, err := r.genReferenceId()
+	tx, err := r.DB.Begin()
 	if err != nil {
 		return err
 	}
-	if _, err = r.exec(insert_reference_sql, P{
+	defer tx.Rollback()
+	if _, err := tx.Exec(m.UpQuery); err != nil {
+		return err
+	}
+	id, err := r.genReferenceId(tx)
+	if err != nil {
+		return err
+	}
+	if _, err = r.exec(tx, insert_reference_sql, P{
 		"id":            id,
 		"migration_key": m.Name,
 		"created_at":    time.Now().UTC().Format(DB_TIMESTAMP_FORMAT),
 	}); err != nil {
 		return err
 	}
-	return nil
+	return tx.Commit()
 }
 
 func (r *ReferenceRepositoryImpl) Down(m Migration) error {
-	if _, err := r.DB.Exec(m.DownQuery); err != nil {
+	tx, err := r.DB.Begin()
+	if err != nil {
 		return err
 	}
-	if _, err := r.exec(delete_reference_sql, P{
+	defer tx.Rollback()
+	if _, err := tx.Exec(m.DownQuery); err != nil {
+		return err
+	}
+	if _, err := r.exec(tx, delete_reference_sql, P{
 		"migration_key": m.Name,
 	}); err != nil {
 		return err
 	}
-	return nil
+	return tx.Commit()
 }
 
 func (r *ReferenceRepositoryImpl) IsLocked() (bool, error) {
-	row, err := r.query_row(is_locked_sql)
+	row, err := r.query_row(r.DB, is_locked_sql)
 	if err != nil {
 		return false, err
 	}
@@ -215,7 +224,7 @@ func (r *ReferenceRepositoryImpl) IsLocked() (bool, error) {
 
 func (r *ReferenceRepositoryImpl) setLock(is_locked bool) error {
 	var exists_data bool
-	row, err := r.query_row(check_lock_sql)
+	row, err := r.query_row(r.DB, check_lock_sql)
 	if err != nil {
 		return err
 	}
@@ -228,7 +237,7 @@ func (r *ReferenceRepositoryImpl) setLock(is_locked bool) error {
 	} else {
 		query = insert_lock_sql
 	}
-	_, err = r.exec(query, P{"is_locked": is_locked})
+	_, err = r.exec(r.DB, query, P{"is_locked": is_locked})
 	return err
 }
 
@@ -241,7 +250,7 @@ func (r *ReferenceRepositoryImpl) Unlock() error {
 }
 
 func (r *ReferenceRepositoryImpl) GetLast() (Reference, error) {
-	row, err := r.query_row(select_last_reference_sql)
+	row, err := r.query_row(r.DB, select_last_reference_sql)
 	if err != nil {
 		return Reference{}, err
 	}
