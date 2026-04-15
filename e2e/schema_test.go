@@ -12,7 +12,6 @@ func TestDumpSchema(t *testing.T) {
 		os.Remove(schema_file)
 
 		os.Setenv("SCHEMA_FILE_PATH", schema_file)
-		// Trigger dump via cli
 		_, err := capture_output(func() error {
 			return cli.Run([]string{"migrator", "schema"})
 		})

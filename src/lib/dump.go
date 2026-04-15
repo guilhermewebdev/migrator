@@ -12,7 +12,6 @@ func DumpSchema(driver string, dsn string, outputFile string) error {
 
 	switch driver {
 	case "mysql":
-		// DSN format: user:password@tcp(host:port)/dbname
 		parts := strings.Split(dsn, "@")
 		if len(parts) < 2 {
 			return fmt.Errorf("invalid MySQL DSN")
@@ -55,11 +54,9 @@ func DumpSchema(driver string, dsn string, outputFile string) error {
 		cmd = exec.Command("mysqldump", args...)
 
 	case "postgres":
-		// DSN format: postgres://user:pass@host:port/db?sslmode=disable
 		cmd = exec.Command("pg_dump", "--schema-only", dsn)
 
 	case "sqlite", "sqlite3":
-		// DSN format: file path
 		cmd = exec.Command("sqlite3", dsn, ".schema")
 
 	default:

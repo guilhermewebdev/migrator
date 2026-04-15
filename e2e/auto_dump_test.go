@@ -15,7 +15,6 @@ func TestAutoDumpSchema(t *testing.T) {
 		os.Setenv("AUTO_DUMP_SCHEMA", "true")
 		os.Setenv("SCHEMA_FILE_PATH", schema_file)
 
-		// Run up command
 		_, err := capture_output(func() error {
 			return cli.Run([]string{"migrator", "up"})
 		})
