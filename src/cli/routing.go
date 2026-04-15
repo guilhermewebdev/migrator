@@ -93,7 +93,7 @@ func BuildRouter() *lib_cli.App {
 	app := &lib_cli.App{
 		Name:                 "Migrator",
 		Usage:                "Manage your databases with migrations",
-		Version:              "0.4",
+		Version:              "0.5",
 		Compiled:             time.Now().UTC(),
 		EnableBashCompletion: true,
 		HelpName:             "migrate",
