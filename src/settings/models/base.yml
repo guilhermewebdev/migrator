@@ -8,6 +8,12 @@ migrations_dir: ./migrations
 # Name of the table to track migrations in the database
 migrations_table_name: migrations
 
+# If true, generates the database schema automatically after running migrations
+auto_dump_schema: false
+
+# Path where the database schema SQL file will be generated
+schema_file_path: ./schema.sql
+
 # Database connection string (DSN)
 # Uncomment a specific DSN that you need
 

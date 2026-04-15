@@ -8,10 +8,18 @@ type Controller interface {
 	Unlock() (string, error)
 	Down() (string, error)
 	Latest() (string, error)
+	DumpSchema() (string, error)
 }
 
 type ControllerImpl struct {
 	Service Service
+}
+
+func (c *ControllerImpl) DumpSchema() (string, error) {
+	if err := c.Service.DumpSchema(); err != nil {
+		return "Failed to dump schema", err
+	}
+	return "Database schema was dumped successfully", nil
 }
 
 func (c *ControllerImpl) Create(name string) (string, error) {

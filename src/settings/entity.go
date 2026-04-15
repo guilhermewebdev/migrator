@@ -5,4 +5,6 @@ type Settings struct {
 	MigrationsTableName string `yaml:"migrations_table_name"`
 	DB_DSN              string `yaml:"db_dsn"`
 	DB_Driver           string `yaml:"db_driver"`
+	AutoDumpSchema      bool   `yaml:"auto_dump_schema"`
+	SchemaFilePath      string `yaml:"schema_file_path"`
 }
