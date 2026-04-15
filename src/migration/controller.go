@@ -67,7 +67,7 @@ func (c *ControllerImpl) Latest() (string, error) {
 	message = message + "=======" + "\n"
 	if err != nil {
 		message = message + err.Error()
-		return message, fmt.Errorf(message)
+		return message, fmt.Errorf("%s", message)
 	}
 	return message, nil
 }
