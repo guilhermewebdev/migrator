@@ -143,7 +143,7 @@ func BuildRouter() *lib_cli.App {
 		Authors: []*lib_cli.Author{
 			{
 				Name:  "Guilherme Isaías",
-				Email: "guilherme@cibernetica.dev",
+				Email: "wgsilva.isaias@gmail.com",
 			},
 		},
 		Commands: []*lib_cli.Command{

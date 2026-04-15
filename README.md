@@ -10,7 +10,7 @@ Current version: 0.5
 
 ## Author
 
-Guilherme Isaías <guilherme@cibernetica.dev>
+Guilherme Isaías <wgsilva.isaias@gmail.com>
 
 ## Installation
 
@@ -234,4 +234,4 @@ For additional information on each command and its options, use:
 migrate [command] --help
 ```
 
-Thank you for using Migrator! If you have any questions or feedback, please contact Guilherme Isaías at <guilherme@cibernetica.dev>.
+Thank you for using Migrator! If you have any questions or feedback, please contact Guilherme Isaías at <wgsilva.isaias@gmail.com>.
